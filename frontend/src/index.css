@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 5.9% 10%;
+  
+  /* Colores para el Sidebar del Sistema de Arbitraje */
+  --sidebar-background: 240 5% 96%;
+  --sidebar-foreground: 240 5% 26%;
+  --sidebar-primary: 240 6% 10%;
+  --sidebar-accent: 240 5% 90%;
+  --sidebar-border: 240 5% 84%;
+  --sidebar-ring: 217 91% 60%;
+}
+
+/* Si tenías algún @apply font-bold, muévelo debajo de @import "tailwindcss" */
+body {
+  font-family: 'Inter', sans-serif;
+}
