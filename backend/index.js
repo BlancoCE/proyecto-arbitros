@@ -1,92 +1,54 @@
+require('dotenv').config();
 const express = require('express');
-const { Pool } = require('pg');
 const cors = require('cors');
-const app = express();
+const path = require('path');
 
+// Importamos las rutas
+const userRoutes = require('./src/routes/userRoutes');
+const partidoRoutes = require('./src/routes/partidoRoutes');
+const asistenciaRoutes = require('./src/routes/asistenciaRoutes');
+const pruebasFisicasRoutes = require('./src/routes/pruebasFisicasRoutes');
+const pruebasEscritasRoutes = require('./src/routes/pruebasEscritasRoutes');
+const sancionRoutes = require('./src/routes/sancionRoutes');
+const licenciaRoutes = require('./src/routes/licenciaRoutes');
+const designacionRoutes = require('./src/routes/designacionRoutes');
+const dashboardRoutes = require('./src/routes/dashboardRoutes');
+const authRoutes = require('./src/routes/authRoutes');
+const evaluacionRoutes = require('./src/routes/evaluacionRoutes');
+const configuracionRoutes = require('./src/routes/configuracionRoutes');
+const reporteRoutes = require('./src/routes/reporteRoutes');
+
+const app = express();
+const PORT = 3001;
+
+// Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Configuración de conexión a tu PostgreSQL
-const pool = new Pool({
-  user: 'postgres', // tu usuario de postgres
-  host: 'localhost',
-  database: 'colegio_arbitros', 
-  password: '123456',
-  port: 5432,
+// RUTAS CENTRALIZADAS
+app.use('/api', userRoutes);    // Maneja /api/login, /api/asesores, /api/arbitros
+app.use('/api', partidoRoutes); // Maneja /api/partidos, /api/equipos-sugeridos
+app.use('/api', asistenciaRoutes);
+app.use('/api', pruebasFisicasRoutes);
+app.use('/api', pruebasEscritasRoutes);
+app.use('/api', sancionRoutes);
+app.use('/api', licenciaRoutes);
+app.use('/api', designacionRoutes);
+app.use('/api', dashboardRoutes);
+app.use('/api', authRoutes);
+app.use('/api', evaluacionRoutes);
+app.use('/api', configuracionRoutes);
+app.use('/api', reporteRoutes)
+
+// Manejo de errores global
+app.use((err, req, res, next) => {
+  console.error("Error detectado:", err.message);
+  res.status(500).json({ success: false, message: err.message || "Error interno del servidor" });
 });
 
-// Endpoint para validar el Login
 
-app.post('/api/login', async (req, res) => {
-  const { usuario, password } = req.body;
-
-  try {
-    // 1. Buscamos al usuario por nombre_usuario o email (más flexible)
-    const queryBusqueda = `
-      SELECT id_usuario, nombre_usuario, email, rol, estado 
-      FROM usuario 
-      WHERE nombre_usuario = $1 AND password_hash = $2 AND estado = 'activo'
-    `;
-    
-    const result = await pool.query(queryBusqueda, [usuario, password]);
-
-    if (result.rows.length > 0) {
-      const user = result.rows[0];
-
-      // 2. ACTUALIZACIÓN: Registramos el último login en la BD
-      await pool.query(
-        'UPDATE usuario SET ultimo_login = CURRENT_TIMESTAMP WHERE id_usuario = $1',
-        [user.id_usuario]
-      );
-
-      // 3. Enviamos los datos al frontend
-      res.json({ 
-        success: true, 
-        user: {
-          id: user.id_usuario,
-          nombre: user.nombre_usuario,
-          rol: user.rol,
-          email: user.email
-        }
-      });
-    } else {
-      res.status(401).json({ message: "Credenciales incorrectas o cuenta inactiva" });
-    }
-  } catch (err) {
-    console.error("Error en DB:", err.message);
-    res.status(500).json({ message: "Error interno del servidor" });
-  }
-});
-
-app.listen(3001, () => console.log("Servidor corriendo en puerto 3001"));
-
-// ... (Configuración de Express y Pool de Postgres)
-
-// backend/index.js
-
-app.post('/api/login', async (req, res) => {
-  const { usuario, password } = req.body; // Estos vienen del frontend
-
-  try {
-    // CAMBIO AQUÍ: Usamos nombre_usuario
-    const query = `
-      SELECT id_usuario, nombre_usuario, nombre_completo, rol 
-      FROM usuario
-      WHERE nombre_usuario = $1 
-      AND password_hash = $2 
-      AND estado = TRUE
-    `;
-    
-    const result = await pool.query(query, [usuario, password]);
-
-    if (result.rows.length > 0) {
-      // Si lo encuentra, enviamos los datos del usuario al frontend
-      res.json({ success: true, user: result.rows[0] });
-    } else {
-      res.status(401).json({ message: "Usuario o contraseña incorrectos" });
-    }
-  } catch (err) {
-    console.error("Error en login:", err);
-    res.status(500).json({ message: "Error interno del servidor" });
-  }
+app.listen(PORT, () => {
+  console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
 });

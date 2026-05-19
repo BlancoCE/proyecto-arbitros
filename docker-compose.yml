@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # Base de Datos
+  db:
+    image: postgres:15
+    container_name: aflp_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "123456"
+      POSTGRES_DB: colegio_arbitros
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Servidor Backend
+  backend:
+    build: ./backend
+    container_name: aflp_backend
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      # Nota: Aquí usamos 'db' como host porque Docker los comunica internamente
+      DATABASE_URL: postgres://postgres:123456@db:5432/colegio_arbitros
+      PORT: 3001
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:

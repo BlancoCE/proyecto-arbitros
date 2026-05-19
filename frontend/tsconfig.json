@@ -10,15 +10,18 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    // 1. CAMBIO: 'Bundler' es el estándar moderno para Vite/React
+    "moduleResolution": "Bundler", 
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
+    // 2. CAMBIO: Para usar "paths" sin "baseUrl", usamos "paths" relativos
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    // 3. OPCIONAL: Si prefieres mantener tu config pero silenciar los avisos
+    "ignoreDeprecations": "5.0" 
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

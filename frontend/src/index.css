@@ -1,33 +1,27 @@
 @import "tailwindcss";
 
-@theme {
-  --color-sidebar: var(--sidebar-background);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+/* Definición de la animación */
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-:root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
-  --primary: 240 5.9% 10%;
-  --primary-foreground: 0 0% 98%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 240 5.9% 10%;
-  
-  /* Colores para el Sidebar del Sistema de Arbitraje */
-  --sidebar-background: 240 5% 96%;
-  --sidebar-foreground: 240 5% 26%;
-  --sidebar-primary: 240 6% 10%;
-  --sidebar-accent: 240 5% 90%;
-  --sidebar-border: 240 5% 84%;
-  --sidebar-ring: 217 91% 60%;
+/* Clase reutilizable para Sidebar y Header */
+.bg-gradient-aflp {
+  background: linear-gradient(-45deg, #1a2c4e, #1e3a8a, #1e5adc, #1a2c4e);
+  background-size: 400% 400%;
+  animation: gradient 10s ease infinite;
 }
 
-/* Si tenías algún @apply font-bold, muévelo debajo de @import "tailwindcss" */
 body {
+  margin: 0;
   font-family: 'Inter', sans-serif;
+  background-color: #ffffff; /* Fondo de la página blanco */
+  color: #1a2c4e;
+}
+
+/* Forzar que el contenedor de los módulos sea blanco */
+[data-slot="sidebar-inset"] {
+  background-color: #ffffff !important;
 }

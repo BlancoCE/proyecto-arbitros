@@ -9,7 +9,6 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Generar código de seguridad aleatorio
   const generarCaptcha = () => {
     const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let res = '';
@@ -19,113 +18,153 @@ const LoginPage = () => {
 
   useEffect(() => {
     generarCaptcha();
-    // Limpiar cualquier sesión anterior al cargar el login
     localStorage.removeItem('user_auth');
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(''); // Limpiar errores previos
+    setError('');
 
-    // 1. VALIDACIÓN DEL CÓDIGO DE SEGURIDAD (CAPTCHA)
     if (formData.captchaInput.toUpperCase() !== captchaSistema) {
-        setError("El código de seguridad es incorrecto."); // Error específico
-        generarCaptcha();
+        setError("El código de seguridad es incorrecto.");
         return;
     }
 
     try {
         const response = await fetch('http://localhost:3001/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            usuario: formData.usuario,
-            password: formData.password
-        })
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                usuario: formData.usuario, 
+                password: formData.password 
+            }),
         });
 
         const data = await response.json();
 
-        if (response.ok) {
-        localStorage.setItem('user_auth', JSON.stringify(data.user));
-        navigate('/dashboard');
+        if (response.ok) { // Cambiado de data.success a response.ok para ser más preciso
+            // --- LAS DOS LÍNEAS CRÍTICAS ---
+            sessionStorage.setItem('user_auth', JSON.stringify(data.user));
+            sessionStorage.setItem('token', data.token); // ESTA ES LA QUE FALTABA
+            // ------------------------------
+            navigate('/dashboard');
         } else {
-        // 2. ERROR DE USUARIO O CONTRASEÑA
-        // El backend enviará "Usuario o contraseña incorrectos"
-        setError(data.message); 
-        generarCaptcha();
+            setError(data.message || "Credenciales inválidas");
+            generarCaptcha();
         }
     } catch (err) {
-        // 3. ERROR DE CONEXIÓN (SERVIDOR APAGADO)
-        setError("Error: No se pudo conectar con el servidor (Backend)");
+        setError("Error al conectar con el servidor");
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    const email = window.prompt("Ingresa tu correo electrónico registrado:");
+    if (!email) return;
+
+    try {
+      const response = await fetch('http://localhost:3001/api/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      alert(data.message);
+    } catch (err) {
+      alert("Error al conectar con el servidor");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#1e3a8a] p-4 font-sans">
-      <div className="w-full max-w-md bg-white/20 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden border border-white/30">
+    /* APLICAMOS LA CLASE ANIMADA AQUÍ */
+    <div className="min-h-screen bg-gradient-aflp flex items-center justify-center p-4">
+      
+      {/* Contenedor Principal (Tarjeta de Login) */}
+      <div className="max-w-md w-full bg-white/95 backdrop-blur-sm rounded-[2rem] shadow-2xl overflow-hidden border border-white/20">
         
-        <div className="flex flex-col items-center pt-8 pb-4">
-          <div className="w-24 h-24 bg-[#151960] rounded-full flex items-center justify-center mb-2 shadow-inner border border-white/10">
-            <User className="w-14 h-14 text-white" />
+        {/* Encabezado con Logo/Icono */}
+        <div className="p-8 text-center bg-gray-50/50 border-b border-gray-100">
+          <div className="w-20 h-20 bg-indigo-600 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg transform -rotate-6">
+            <ShieldCheck className="text-white w-12 h-12" />
           </div>
-          <h2 className="text-[#151960] font-bold text-xl">Iniciar Sesión</h2>
+          <h2 className="text-2xl font-black text-[#151960] tracking-tight">SISTEMA AFLP</h2>
+          <p className="text-gray-500 text-sm font-medium">Gestión Profesional de Arbitraje</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 pt-2 space-y-4">
-          {error && <div className="bg-red-500/80 text-white p-3 rounded text-sm text-center">{error}</div>}
-
-          <div className="flex border-2 border-gray-300 rounded-md overflow-hidden bg-white">
-            <div className="bg-gray-200 p-3 border-r border-gray-300">
-              <User className="text-[#001f3f] w-5 h-5" />
+        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl text-red-700 text-sm animate-bounce">
+              {error}
             </div>
-            <input 
-              type="text" placeholder="Nombre de Usuario" required
-              className="flex-1 p-3 outline-none text-gray-700"
-              onChange={(e) => setFormData({...formData, usuario: e.target.value})}
-            />
+          )}
+
+          {/* Campo Usuario */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-gray-700 uppercase ml-1">Usuario</label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-600 transition-colors">
+                <User size={20} />
+              </div>
+              <input 
+                type="text" required
+                className="block w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-gray-700"
+                placeholder="Nombre de usuario"
+                onChange={(e) => setFormData({...formData, usuario: e.target.value})}
+              />
+            </div>
           </div>
 
-          <div className="flex border-2 border-gray-300 rounded-md overflow-hidden bg-white">
-            <div className="bg-gray-200 p-3 border-r border-gray-300">
-              <Lock className="text-[#001f3f] w-5 h-5" />
+          {/* Campo Password */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-gray-700 uppercase ml-1">Contraseña</label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-600 transition-colors">
+                <Lock size={20} />
+              </div>
+              <input 
+                type={showPassword ? "text" : "password"} required
+                className="block w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-gray-700"
+                placeholder="••••••••"
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+              />
+              <button 
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-indigo-600 transition-colors"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
-            <input 
-              type={showPassword ? "text" : "password"} placeholder="Contraseña" required
-              className="flex-1 p-3 outline-none text-gray-700"
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
-            />
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className="p-3 bg-gray-100">
-              {showPassword ? <EyeOff className="w-5 h-5 text-gray-500" /> : <Eye className="w-5 h-5 text-gray-500" />}
-            </button>
           </div>
 
-          <div className="flex justify-center items-center rounded-md overflow-hidden border-2 border-gray-300">
-            <div className="bg-[#5bc0de] text-[#001f3f] font-mono text-2xl font-bold py-2 px-6 flex-1 text-center select-none italic tracking-widest border-r-2 border-gray-300">
-              {captchaSistema}
-            </div>
-            <button type="button" onClick={generarCaptcha} className="bg-white p-4 hover:bg-gray-50">
-              <RefreshCw className="text-gray-600 w-6 h-6" />
-            </button>
+          {/* Captcha */}
+          <div className="space-y-3">
+             <div className="flex items-center gap-2">
+                <div className="flex-1 bg-indigo-50 text-indigo-700 font-mono text-2xl font-black tracking-[0.5em] py-3 rounded-2xl text-center border-2 border-dashed border-indigo-200 select-none">
+                  {captchaSistema}
+                </div>
+                <button type="button" onClick={generarCaptcha} className="p-4 bg-gray-100 rounded-2xl hover:bg-gray-200 text-gray-600 transition-colors active:scale-90">
+                  <RefreshCw size={24} />
+                </button>
+             </div>
+             <input 
+                type="text" placeholder="Ingresa el código" required
+                className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 text-center font-bold uppercase"
+                onChange={(e) => setFormData({...formData, captchaInput: e.target.value})}
+              />
           </div>
 
-          <div className="flex border-2 border-gray-300 rounded-md overflow-hidden bg-white">
-            <div className="bg-gray-200 p-3 border-r border-gray-300">
-              <ShieldCheck className="text-[#001f3f] w-5 h-5" />
-            </div>
-            <input 
-              type="text" placeholder="Ingresa el Código de Seguridad" required
-              className="flex-1 p-3 outline-none text-gray-700 uppercase"
-              onChange={(e) => setFormData({...formData, captchaInput: e.target.value})}
-            />
-          </div>
-
+          {/* Botones de Acción */}
           <div className="space-y-3 pt-4">
-            <button type="submit" className="w-full bg-[#337ab7] hover:bg-[#286090] text-white font-bold py-3 rounded flex items-center justify-center text-lg uppercase shadow-md transition-all">
+            <button type="submit" className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-indigo-200 flex items-center justify-center text-lg transition-all active:scale-[0.98]">
               INGRESAR <LogIn className="ml-2 w-5 h-5" />
             </button>
-            <button type="button" className="w-full bg-[#151960] hover:bg-[#545AD9] text-white font-bold py-3 rounded flex items-center justify-center text-lg uppercase shadow-md transition-all">
-              Recuperar Contraseña <Key className="ml-2 w-5 h-5" />
+            
+            <button 
+              type="button" 
+              onClick={handleForgotPassword}
+              className="w-full py-4 text-indigo-600 font-bold hover:bg-indigo-50 rounded-2xl transition-all flex items-center justify-center gap-2"
+            >
+              OLVIDÉ MI CONTRASEÑA <Key size={18} />
             </button>
           </div>
         </form>

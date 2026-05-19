@@ -8,15 +8,21 @@ export default {
     extend: {
       colors: {
         sidebar: {
-          DEFAULT: 'hsl(var(--sidebar-background))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-          primary: 'hsl(var(--sidebar-primary))',
-          accent: 'hsl(var(--sidebar-accent))',
-          border: 'hsl(var(--sidebar-border))',
-          ring: 'hsl(var(--sidebar-ring))',
-        }
-      }
+          DEFAULT: 'rgb(26, 44, 78)', // El color azul marino de tus imágenes
+          foreground: '#ffffff',
+          primary: '#2563eb',
+          accent: 'rgba(255, 255, 255, 0.1)',
+          'accent-foreground': '#ffffff',
+          border: 'rgba(255, 255, 255, 0.1)',
+          ring: '#2563eb',
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")], // Útil para las transiciones del Sidebar
 }
