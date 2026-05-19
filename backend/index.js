@@ -19,7 +19,7 @@ const configuracionRoutes = require('./src/routes/configuracionRoutes');
 const reporteRoutes = require('./src/routes/reporteRoutes');
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // Middlewares
 app.use(cors());
