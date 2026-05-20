@@ -17,7 +17,7 @@ const HistorialAsistencia = () => {
 
     const cargarResumen = async () => {
         try {
-            const res = await axios.get('${import.meta.env.VITE_API_URL}/api/asistencia/resumen-faltas');
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/asistencia/resumen-faltas`);
             
             // Lógica de Orden Jerárquico (FIFA -> 1ra -> 2da -> 3ra -> 4ta)
             const ordenCat: any = { 
@@ -81,7 +81,7 @@ const HistorialAsistencia = () => {
     const aplicarJustificacion = async (idAsistencia: number) => {
         if (!window.confirm("¿Desea justificar esta falta? Esto la eliminará del conteo del Art. 7")) return;
         try {
-            await axios.put('${import.meta.env.VITE_API_URL}/api/asistencia/justificar', { id_asistencia: idAsistencia });
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/asistencia/justificar`, { id_asistencia: idAsistencia });
             setFaltasDetalle(faltasDetalle.filter((f: any) => f.id_asistencia !== idAsistencia));
             cargarResumen(); // Recargar datos para actualizar contadores
         } catch (err) {
