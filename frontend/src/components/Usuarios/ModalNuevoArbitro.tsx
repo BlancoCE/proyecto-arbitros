@@ -9,7 +9,7 @@ interface ModalProps {
 }
 
 const ModalNuevoArbitro: React.FC<ModalProps> = ({ isOpen, onClose, onSuccess }) => {
-  const URL_BACKEND = "import.meta.env.VITE_API_URL";
+  const URL_BACKEND = `${import.meta.env.VITE_API_URL}`;
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

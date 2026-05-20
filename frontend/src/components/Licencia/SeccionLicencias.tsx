@@ -17,7 +17,7 @@ const SeccionLicencias: React.FC<Props> = ({ refreshKey, onEdit }) => {
 
     const fetchLicencias = async () => {
         try {
-            const res = await axios.get('import.meta.env.VITE_API_URL/api/licencias/licencias-lista');
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/licencias/licencias-lista`);
             setData(res.data);
         } catch (err) { console.error(err); } finally { setLoading(false); }
     };
@@ -27,7 +27,7 @@ const SeccionLicencias: React.FC<Props> = ({ refreshKey, onEdit }) => {
     const handleEliminar = async (id: number, nombre: string) => {
         if (window.confirm(`¿Está seguro de eliminar la licencia de ${nombre}?`)) {
             try {
-                await axios.delete(`import.meta.env.VITE_API_URL/api/licencias/eliminar/${id}`);
+                await axios.delete(`${import.meta.env.VITE_API_URL}/api/licencias/eliminar/${id}`);
                 fetchLicencias();
             } catch (err) { alert("Error al eliminar"); }
         }
@@ -35,7 +35,7 @@ const SeccionLicencias: React.FC<Props> = ({ refreshKey, onEdit }) => {
 
     const verDocumento = (url: string) => {
         // Abrir el documento en una pestaña nueva
-        window.open(`import.meta.env.VITE_API_URL${url}`, '_blank');
+        window.open(`${import.meta.env.VITE_API_URL}${url}`, '_blank');
     };
 
     const filtrar = (lista: any[]) => {

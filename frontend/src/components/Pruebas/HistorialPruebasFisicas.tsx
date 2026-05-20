@@ -22,7 +22,7 @@ const HistorialPruebasFisicas: React.FC<HistorialProps> = ({ onBack }) => {
   const fetchHistorial = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('import.meta.env.VITE_API_URL/api/pruebas-fisicas/historial');
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/pruebas-fisicas/historial`);
       setListaCabecera(res.data);
     } catch (err) {
       console.error("Error al cargar historial", err);
@@ -34,7 +34,7 @@ const HistorialPruebasFisicas: React.FC<HistorialProps> = ({ onBack }) => {
   const verDetalles = async (prueba: any) => {
     const fechaLimpia = prueba.fecha.split('T')[0];
     try {
-      const res = await axios.get(`import.meta.env.VITE_API_URL/api/pruebas-fisicas/detalle`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/pruebas-fisicas/detalle`, {
         params: { fecha: prueba.fecha, tipo: prueba.tipo_prueba }
       });
       setDetalleSeleccionado(res.data);
@@ -48,7 +48,7 @@ const HistorialPruebasFisicas: React.FC<HistorialProps> = ({ onBack }) => {
     if (!window.confirm(`¿Estás seguro de eliminar la prueba "${tipo}" del ${fecha}? Esta acción no se puede deshacer.`)) return;
     
     try {
-      await axios.delete(`import.meta.env.VITE_API_URL/api/pruebas-fisicas/eliminar`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/pruebas-fisicas/eliminar`, {
         params: { fecha, tipo }
       });
       alert("Registro eliminado correctamente.");
@@ -129,7 +129,7 @@ const HistorialPruebasFisicas: React.FC<HistorialProps> = ({ onBack }) => {
                 </div>
               </div>
               <a 
-                href={`import.meta.env.VITE_API_URL${infoPrueba.url_informe}`} target="_blank" rel="noopener noreferrer"
+                href={`${import.meta.env.VITE_API_URL}${infoPrueba.url_informe}`} target="_blank" rel="noopener noreferrer"
                 className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase shadow-lg shadow-emerald-100"
               >
                 <ExternalLink size={14} /> Abrir PDF

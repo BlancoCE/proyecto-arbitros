@@ -5,7 +5,7 @@ const AvatarUpload = ({ fotoActual, onImageChange }: any) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     
     // Define la URL base de tu backend (Ajusta el puerto si es necesario)
-    const URL_BACKEND = "import.meta.env.VITE_API_URL"; 
+    const URL_BACKEND = `${import.meta.env.VITE_API_URL}`; 
 
     // Estado para la previsualización
     const [preview, setPreview] = useState<string | null>(null);

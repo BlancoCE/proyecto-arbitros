@@ -34,7 +34,7 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
 
   useEffect(() => {
     if (arbitro?.foto) {
-      setSelectedImage(`import.meta.env.VITE_API_URL${arbitro.foto}`);
+      setSelectedImage(`${import.meta.env.VITE_API_URL}${arbitro.foto}`);
     } else {
       setSelectedImage(null);
     }
@@ -56,7 +56,7 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
     }
 
     try {
-      const response = await fetch(`import.meta.env.VITE_API_URL/api/usuarios/arbitros/${arbitro.id_arbitro}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/arbitros/${arbitro.id_arbitro}`, {
         method: 'PUT',
         body: formData,
       });
@@ -81,7 +81,7 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
   const handleDelete = async () => {
     if (window.confirm(`¿Estás seguro de eliminar permanentemente al árbitro ${arbitro.nombre} y su cuenta de usuario?`)) {
       try {
-        const response = await fetch(`import.meta.env.VITE_API_URL/api/usuarios/arbitros/${arbitro.id_arbitro}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/arbitros/${arbitro.id_arbitro}`, {
           method: 'DELETE',
         });
         if (response.ok) {

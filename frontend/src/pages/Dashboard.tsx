@@ -38,11 +38,11 @@ const Dashboard = () => {
       try {
         setLoading(true);
         // Llamada a las estadísticas del dashboard
-        const resStats = await fetch('import.meta.env.VITE_API_URL/api/dashboard/stats');
+        const resStats = await fetch(`${import.meta.env.VITE_API_URL}/api/dashboard/stats`);
         const dataStats = await resStats.json();
 
         // Llamada a los partidos (reutilizando tu API de partidos existente)
-        const resPartidos = await fetch('import.meta.env.VITE_API_URL/api/partidos');
+        const resPartidos = await fetch(`${import.meta.env.VITE_API_URL}/api/partidos`);
         const dataPartidos = await resPartidos.json();
 
         if (dataStats) {

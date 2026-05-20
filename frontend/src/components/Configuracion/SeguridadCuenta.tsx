@@ -36,7 +36,7 @@ const SeguridadCuenta: React.FC = () => {
         try {
             const token = sessionStorage.getItem('token');
             // Nota: Este endpoint lo crearemos en el backend a continuación
-            await axios.put('import.meta.env.VITE_API_URL/api/configuracion/cambiar-password', form, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/configuracion/cambiar-password`, form, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMensaje({ tipo: 'success', texto: 'Contraseña actualizada correctamente.' });

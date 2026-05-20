@@ -19,7 +19,7 @@ const SeccionSanciones: React.FC<SeccionProps> = ({ refreshKey, onEdit }) => {
         const cargarSanciones = async () => {
             try {
                 const token = sessionStorage.getItem('token');
-                const response = await fetch('import.meta.env.VITE_API_URL/api/sancion', {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/sancion`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -46,7 +46,7 @@ const SeccionSanciones: React.FC<SeccionProps> = ({ refreshKey, onEdit }) => {
     useEffect(() => {
         const fetchSanciones = async () => {
             try {
-                const res = await axios.get('import.meta.env.VITE_API_URL/api/sancion');
+                const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/sancion`);
                 setData(res.data);
             } catch (err) {
                 console.error("Error al cargar sanciones", err);
@@ -65,7 +65,7 @@ const SeccionSanciones: React.FC<SeccionProps> = ({ refreshKey, onEdit }) => {
     const handleEliminar = async (id: number, nombre: string) => {
         if (window.confirm(`¿Está seguro de eliminar la sanción de ${nombre}? Esta acción borrará el archivo físico de la resolución y restaurará el estado del árbitro.`)) {
             try {
-                await axios.delete(`import.meta.env.VITE_API_URL/api/sancion/${id}`);
+                await axios.delete(`${import.meta.env.VITE_API_URL}/api/sancion/${id}`);
                 // Usamos refreshKey para recargar sin recargar toda la página si es posible, 
                 // pero por consistencia con tu código original:
                 window.location.reload();
@@ -81,7 +81,7 @@ const SeccionSanciones: React.FC<SeccionProps> = ({ refreshKey, onEdit }) => {
             alert("No hay un documento cargado para esta sanción.");
             return;
         }
-        const urlCompleta = `import.meta.env.VITE_API_URL${url}`;
+        const urlCompleta = `${import.meta.env.VITE_API_URL}${url}`;
         window.open(urlCompleta, '_blank');
     };
 

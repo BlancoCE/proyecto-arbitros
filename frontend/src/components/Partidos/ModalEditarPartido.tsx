@@ -50,7 +50,7 @@ export const ModalEditarPartido: React.FC<ModalEditarProps> = ({ isOpen, onClose
     };
 
     try {
-      const res = await fetch(`import.meta.env.VITE_API_URL/api/partidos/${partido.id_partido}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/partidos/${partido.id_partido}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -67,7 +67,7 @@ export const ModalEditarPartido: React.FC<ModalEditarProps> = ({ isOpen, onClose
   const handleDelete = async () => {
     if (window.confirm(`¿Estás seguro de eliminar el encuentro entre ${partido.equipo_local} vs ${partido.equipo_visitante}? Esta acción borrará también las planillas y sanciones asociadas.`)) {
       try {
-        const res = await fetch(`import.meta.env.VITE_API_URL/api/partidos/${partido.id_partido}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/partidos/${partido.id_partido}`, {
           method: 'DELETE'
         });
         if (res.ok) {

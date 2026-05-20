@@ -29,7 +29,7 @@ const FormularioEvaluacion: React.FC<any> = ({ partido, onClose, onSuccess }) =>
 
     const fetchEvaluaciones = async () => {
         try {
-            const res = await axios.get(`import.meta.env.VITE_API_URL/api/evaluaciones/detalles/${partido.id_partido}`, {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/evaluaciones/detalles/${partido.id_partido}`, {
                 headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` }
             });
             setEvaluacionesExistentes(res.data);
@@ -80,7 +80,7 @@ const FormularioEvaluacion: React.FC<any> = ({ partido, onClose, onSuccess }) =>
         };
 
         try {
-            const res = await axios.post('import.meta.env.VITE_API_URL/api/evaluaciones', payload, {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/evaluaciones`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
