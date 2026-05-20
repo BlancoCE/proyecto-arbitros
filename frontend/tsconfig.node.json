@@ -3,8 +3,7 @@
     "composite": true,
     "skipLibCheck": true,
     "module": "ESNext",
-    "moduleResolution": "node10",
-    "ignoreDeprecations": "6.0", //revisar
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strict": true
   },
