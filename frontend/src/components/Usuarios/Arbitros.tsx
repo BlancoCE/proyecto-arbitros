@@ -25,7 +25,7 @@ export interface Arbitro {
 
 const ArbitrosPage = () => {
   const navigate = useNavigate();
-  const URL_BACKEND = `import.meta.env.VITE_API_URL}`;
+  const URL_BACKEND = `${import.meta.env.VITE_API_URL}`;
   
   const [arbitros, setArbitros] = useState<Arbitro[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
