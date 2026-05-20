@@ -20,7 +20,7 @@ const Reportes: React.FC = () => {
             const fetchLista = async () => {
                 try {
                     const token = sessionStorage.getItem('token');
-                    const res = await axios.get('${import.meta.env.VITE_API_URL}/api/reportes/lista-arbitros', {
+                    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/reportes/lista-arbitros`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setListaArbitros(res.data);
