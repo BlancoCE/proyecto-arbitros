@@ -11,7 +11,7 @@ interface Props {
 }
 
 const ModalEditarAsesor: React.FC<Props> = ({ isOpen, onClose, asesor, onSuccess }) => {
-  const URL_BACKEND = "http://localhost:3001";
+  const URL_BACKEND = "import.meta.env.VITE_API_URL";
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

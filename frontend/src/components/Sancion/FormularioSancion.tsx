@@ -39,7 +39,7 @@ const FormularioSancion: React.FC<FormularioProps> = ({ onSuccess, onBack, sanci
     useEffect(() => {
         const cargarArbitros = async () => {
             try {
-                const res = await axios.get('http://localhost:3001/api/sancion/arbitros-jerarquia');
+                const res = await axios.get('import.meta.env.VITE_API_URL/api/sancion/arbitros-jerarquia');
                 setArbitros(res.data);
             } catch (err) {
                 console.error("Error cargando árbitros:", err);
@@ -122,11 +122,11 @@ const FormularioSancion: React.FC<FormularioProps> = ({ onSuccess, onBack, sanci
 
         try {
             if (sancionParaEditar) {
-                await axios.put(`http://localhost:3001/api/sancion/${sancionParaEditar.id_sancion}`, data, {
+                await axios.put(`import.meta.env.VITE_API_URL/api/sancion/${sancionParaEditar.id_sancion}`, data, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
             } else {
-                await axios.post('http://localhost:3001/api/sancion', data, {
+                await axios.post('import.meta.env.VITE_API_URL/api/sancion', data, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
             }

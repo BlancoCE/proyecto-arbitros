@@ -46,7 +46,7 @@ const ModalDesignacion = ({ partido, arbitros, onClose, onSuccess }: any) => {
         try {
             // 2. Incluir el token en la configuración de Axios
             await axios.post(
-                `http://localhost:3001/api/partidos/asignar/${partido.id_partido}`, 
+                `import.meta.env.VITE_API_URL/api/partidos/asignar/${partido.id_partido}`, 
                 terna,
                 {
                     headers: {
@@ -75,7 +75,7 @@ const ModalDesignacion = ({ partido, arbitros, onClose, onSuccess }: any) => {
 
         try {
             // 2. Incluir el token en la configuración de Axios
-            await axios.delete(`http://localhost:3001/api/partidos/deshacer/${partido.id_partido}`, {
+            await axios.delete(`import.meta.env.VITE_API_URL/api/partidos/deshacer/${partido.id_partido}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

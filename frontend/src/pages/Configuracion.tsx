@@ -25,7 +25,7 @@ const Configuracion: React.FC = () => {
     const fetchPerfil = async () => {
         try {
             const token = sessionStorage.getItem('token');
-            const res = await axios.get('http://localhost:3001/api/configuracion/perfil', {
+            const res = await axios.get('import.meta.env.VITE_API_URL/api/configuracion/perfil', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setPerfil(res.data);
@@ -40,7 +40,7 @@ const Configuracion: React.FC = () => {
         setSaving(true);
         try {
             const token = sessionStorage.getItem('token');
-            await axios.put('http://localhost:3001/api/configuracion/actualizar', datosActualizados, {
+            await axios.put('import.meta.env.VITE_API_URL/api/configuracion/actualizar', datosActualizados, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMensaje({ tipo: 'success', texto: '¡Perfil actualizado con éxito!' });

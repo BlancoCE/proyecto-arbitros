@@ -26,7 +26,7 @@ const FormularioLicencia: React.FC<Props> = ({ onBack, onSuccess, licenciaParaEd
     useEffect(() => {
         const cargarData = async () => {
             try {
-                const res = await axios.get('http://localhost:3001/api/licencias/arbitros-habilitados');
+                const res = await axios.get('import.meta.env.VITE_API_URL/api/licencias/arbitros-habilitados');
                 setArbitros(res.data);
                 
                 if (licenciaParaEditar) {
@@ -83,9 +83,9 @@ const FormularioLicencia: React.FC<Props> = ({ onBack, onSuccess, licenciaParaEd
             }
 
             if (licenciaParaEditar) {
-                await axios.put(`http://localhost:3001/api/licencias/${licenciaParaEditar.id_licencia}`, data);
+                await axios.put(`import.meta.env.VITE_API_URL/api/licencias/${licenciaParaEditar.id_licencia}`, data);
             } else {
-                await axios.post('http://localhost:3001/api/licencias/registrar', data);
+                await axios.post('import.meta.env.VITE_API_URL/api/licencias/registrar', data);
             }
             onSuccess();
         } catch (error: any) { 
@@ -103,7 +103,7 @@ const FormularioLicencia: React.FC<Props> = ({ onBack, onSuccess, licenciaParaEd
         }
         setCargandoSancion(true);
         try {
-            const res = await axios.get(`http://localhost:3001/api/sancion/verificar/${id}`);
+            const res = await axios.get(`import.meta.env.VITE_API_URL/api/sancion/verificar/${id}`);
             if (res.data && res.data.tipo_sancion) {
                 setSancionAlerta(res.data);
             } else {

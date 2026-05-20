@@ -43,8 +43,8 @@ const Designaciones: React.FC = () => {
             
             // El árbitro ve sus asignaciones, los demás (Asesores, Admins, etc.) ven todo lo gestionable
             const endpoint = rol === 'arbitro' 
-                ? 'http://localhost:3001/api/mis-designaciones' 
-                : 'http://localhost:3001/api/partidos/pendientes';
+                ? 'import.meta.env.VITE_API_URL/api/mis-designaciones' 
+                : 'import.meta.env.VITE_API_URL/api/partidos/pendientes';
             
             const res = await axios.get(endpoint, config);
             
@@ -66,7 +66,7 @@ const Designaciones: React.FC = () => {
         setSelectedPartido(partido); // Primero seteamos el partido para abrir el modal
         try {
             // Llamamos a la nueva ruta que creamos en el backend
-            const res = await axios.get(`http://localhost:3001/api/arbitros-disponibles/${partido.id_partido}`);
+            const res = await axios.get(`import.meta.env.VITE_API_URL/api/arbitros-disponibles/${partido.id_partido}`);
             setArbitros(res.data);
         } catch (error) {
             console.error("Error al obtener árbitros aptos:", error);

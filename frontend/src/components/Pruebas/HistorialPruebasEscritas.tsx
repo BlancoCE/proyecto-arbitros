@@ -22,7 +22,7 @@ const HistorialPruebasEscritas: React.FC<HistorialProps> = ({ onBack }) => {
   const fetchHistorial = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:3001/api/pruebas-escritas/historial');
+      const res = await axios.get('import.meta.env.VITE_API_URL/api/pruebas-escritas/historial');
       setListaCabecera(res.data);
     } catch (err) {
       console.error("Error al cargar historial:", err);
@@ -33,7 +33,7 @@ const HistorialPruebasEscritas: React.FC<HistorialProps> = ({ onBack }) => {
 
   const verDetalles = async (prueba: any) => {
     try {
-      const res = await axios.get(`http://localhost:3001/api/pruebas-escritas/detalle`, {
+      const res = await axios.get(`import.meta.env.VITE_API_URL/api/pruebas-escritas/detalle`, {
         params: { fecha: prueba.fecha, tema: prueba.tema }
       });
       setDetalleSeleccionado(res.data);
@@ -47,7 +47,7 @@ const HistorialPruebasEscritas: React.FC<HistorialProps> = ({ onBack }) => {
     if (!window.confirm(`¿Está seguro de eliminar el examen "${tema}" del ${fecha}? Se borrarán todas las notas asociadas.`)) return;
     
     try {
-      await axios.delete(`http://localhost:3001/api/pruebas-escritas/eliminar`, {
+      await axios.delete(`import.meta.env.VITE_API_URL/api/pruebas-escritas/eliminar`, {
         params: { fecha, tema }
       });
       alert("Examen eliminado correctamente.");
@@ -140,7 +140,7 @@ const HistorialPruebasEscritas: React.FC<HistorialProps> = ({ onBack }) => {
                 </div>
               </div>
               <a 
-                href={`http://localhost:3001${infoPrueba.url_informe_prueba}`} 
+                href={`import.meta.env.VITE_API_URL${infoPrueba.url_informe_prueba}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all"

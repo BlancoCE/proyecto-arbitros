@@ -25,7 +25,7 @@ export const ModalNuevoPartido: React.FC<ModalProps> = ({ isOpen, onClose, onRef
 
   useEffect(() => {
     if (isOpen) {
-      fetch('http://localhost:3001/api/equipos-sugeridos')
+      fetch('import.meta.env.VITE_API_URL/api/equipos-sugeridos')
         .then(res => res.json())
         .then(data => setEquiposSugeridos(data))
         .catch(err => console.error("Error cargando equipos:", err));
@@ -51,7 +51,7 @@ export const ModalNuevoPartido: React.FC<ModalProps> = ({ isOpen, onClose, onRef
     };
 
     try {
-      const res = await fetch('http://localhost:3001/api/partidos', {
+      const res = await fetch('import.meta.env.VITE_API_URL/api/partidos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

@@ -20,7 +20,7 @@ const Reportes: React.FC = () => {
             const fetchLista = async () => {
                 try {
                     const token = sessionStorage.getItem('token');
-                    const res = await axios.get('http://localhost:3001/api/reportes/lista-arbitros', {
+                    const res = await axios.get('import.meta.env.VITE_API_URL/api/reportes/lista-arbitros', {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setListaArbitros(res.data);
@@ -41,8 +41,8 @@ const Reportes: React.FC = () => {
             
             // Ajustamos la URL para que coincida con el cambio del backend
             const url = idSeleccionado 
-                ? `http://localhost:3001/api/reportes/desempeno/${idSeleccionado}` // <--- 'desempeno'
-                : `http://localhost:3001/api/reportes/desempeno`;                // <--- 'desempeno'
+                ? `import.meta.env.VITE_API_URL/api/reportes/desempeno/${idSeleccionado}` // <--- 'desempeno'
+                : `import.meta.env.VITE_API_URL/api/reportes/desempeno`;                // <--- 'desempeno'
                 
             const res = await axios.get(url, {
                 headers: { Authorization: `Bearer ${token}` }

@@ -27,7 +27,7 @@ const RegistroPruebaEscrita: React.FC = () => {
   const fetchArbitrosParaPrueba = async () => {
     try {
       // Usamos el mismo endpoint optimizado que devuelve la jerarquía
-      const res = await axios.get('http://localhost:3001/api/pruebas-fisicas/arbitros-habilitados');
+      const res = await axios.get('import.meta.env.VITE_API_URL/api/pruebas-fisicas/arbitros-habilitados');
       setArbitros(res.data);
     } catch (err) {
       console.error("Error al cargar árbitros:", err);
@@ -90,7 +90,7 @@ const RegistroPruebaEscrita: React.FC = () => {
 
       formData.append('datos', JSON.stringify(datosFinales));
 
-      await axios.post('http://localhost:3001/api/pruebas-escritas/registrar', formData);
+      await axios.post('import.meta.env.VITE_API_URL/api/pruebas-escritas/registrar', formData);
       alert("Prueba escrita registrada exitosamente.");
       setView('historial');
     } catch (err) {

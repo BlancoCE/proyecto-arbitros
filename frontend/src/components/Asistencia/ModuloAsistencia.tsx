@@ -33,7 +33,7 @@ const ModuloAsistencia: React.FC = () => {
         const cargarArbitros = async () => {
             try {
                 // RUTA ACTUALIZADA A LA FUNCIÓN JERÁRQUICA
-                const res = await axios.get('http://localhost:3001/api/asistencia/arbitros-asistencia');
+                const res = await axios.get('import.meta.env.VITE_API_URL/api/asistencia/arbitros-asistencia');
                 setArbitros(res.data);
                 
                 const inicial: RegistroAsistencia = {};
@@ -79,7 +79,7 @@ const ModuloAsistencia: React.FC = () => {
         }));
 
         try {
-            await axios.post('http://localhost:3001/api/asistencia/registrar', {
+            await axios.post('import.meta.env.VITE_API_URL/api/asistencia/registrar', {
                 fecha,
                 tipo_actividad: tipo,
                 registros

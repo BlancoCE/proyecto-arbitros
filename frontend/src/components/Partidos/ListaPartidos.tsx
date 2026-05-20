@@ -30,7 +30,7 @@ const ListaPartidos = () => {
 
   const fetchPartidos = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/partidos');
+      const res = await fetch('import.meta.env.VITE_API_URL/api/partidos');
       const data = await res.json();
       setPartidos(data);
     } catch (error) {

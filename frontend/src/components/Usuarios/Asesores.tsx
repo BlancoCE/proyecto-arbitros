@@ -25,7 +25,7 @@ export interface Asesor {
 
 const AsesoresPage = () => {
   const navigate = useNavigate();
-  const URL_BACKEND = "http://localhost:3001";
+  const URL_BACKEND = "import.meta.env.VITE_API_URL";
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
