@@ -22,14 +22,24 @@ const ESTRUCTURA_AFLP: Record<string, string[]> = {
 export const ModalEditarPartido: React.FC<ModalEditarProps> = ({ isOpen, onClose, onRefresh, partido }) => {
   const [ligaSel, setLigaSel] = useState("");
   const [estadoSel, setEstadoSel] = useState("");
+  const [categoriaSel, setCategoriaSel] = useState(""); // Estado controlado para la categoría
 
   // Sincronizar estado local con el partido seleccionado al abrir
   useEffect(() => {
     if (partido) {
       setLigaSel(partido.liga || "");
       setEstadoSel(partido.estado || "Programado");
+      setCategoriaSel(partido.categoria || ""); // Sincroniza la categoría real del partido
     }
   }, [partido, isOpen]);
+
+  // Manejador para cambiar de torneo y actualizar la categoría por defecto de forma segura
+  const handleLigaChange = (nuevaLiga: string) => {
+    setLigaSel(nuevaLiga);
+    if (ESTRUCTURA_AFLP[nuevaLiga] && ESTRUCTURA_AFLP[nuevaLiga].length > 0) {
+      setCategoriaSel(ESTRUCTURA_AFLP[nuevaLiga][0]);
+    }
+  };
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,9 +50,8 @@ export const ModalEditarPartido: React.FC<ModalEditarProps> = ({ isOpen, onClose
       hora: formData.get('hora'),
       ubicacion: formData.get('ubicacion'),
       liga: ligaSel,
-      categoria: formData.get('categoria'),
+      categoria: categoriaSel, // Enviamos el estado controlado corregido
       estado: estadoSel,
-      // Mantenemos consistencia con los nombres que espera el Service
       equipo_local_nombre: partido.equipo_local, 
       equipo_visitante_nombre: partido.equipo_visitante,
       goles_local: parseInt(formData.get('goles_local') as string) || 0,
@@ -127,12 +136,14 @@ export const ModalEditarPartido: React.FC<ModalEditarProps> = ({ isOpen, onClose
             </div>
           </div>
 
-          {/* SECCIÓN 2: CATEGORIZACIÓN */}
+          {/* SECCIÓN 2: CATEGORIZACIÓN (ESTADOS CONTROLADOS CORREGIDOS) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-500 ml-2">TORNEO</label>
               <select 
-                required value={ligaSel} onChange={(e) => setLigaSel(e.target.value)}
+                required 
+                value={ligaSel} 
+                onChange={(e) => handleLigaChange(e.target.value)}
                 className="w-full p-4 bg-slate-100 rounded-2xl border-none font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 {Object.keys(ESTRUCTURA_AFLP).map(l => <option key={l} value={l}>{l}</option>)}
@@ -141,7 +152,10 @@ export const ModalEditarPartido: React.FC<ModalEditarProps> = ({ isOpen, onClose
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-500 ml-2">CATEGORÍA</label>
               <select 
-                required name="categoria" defaultValue={partido.categoria}
+                required 
+                name="categoria" 
+                value={categoriaSel} 
+                onChange={(e) => setCategoriaSel(e.target.value)}
                 className="w-full p-4 bg-slate-100 rounded-2xl border-none font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 {ligaSel && ESTRUCTURA_AFLP[ligaSel].map(c => <option key={c} value={c}>{c}</option>)}
@@ -149,7 +163,7 @@ export const ModalEditarPartido: React.FC<ModalEditarProps> = ({ isOpen, onClose
             </div>
           </div>
 
-          {/* SECCIÓN 3: MARCADOR Y ESTADO (Visualmente destacado) */}
+          {/* SECCIÓN 3: MARCADOR Y ESTADO */}
           <div className="bg-slate-50 p-6 rounded-[2.5rem] border-2 border-slate-100 space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
