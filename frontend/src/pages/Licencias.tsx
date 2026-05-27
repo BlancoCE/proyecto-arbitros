@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Plus, X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import SeccionLicencias from '../components/Licencia/SeccionLicencias';
 import FormularioLicencia from '../components/Licencia/FormularioLicencia';
 
