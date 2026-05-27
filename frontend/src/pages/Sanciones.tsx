@@ -55,33 +55,35 @@ const Sanciones: React.FC = () => {
 
                 {/* MODAL AJUSTADO PARA PANTALLAS TÁCTILES */}
                 {showModal && (
-                    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
-                        {/* Fondo oscuro con desenfoque */}
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-x-hidden overflow-y-auto">
+                        
+                        {/* Backdrop (Fondo opacado y desenfocado) */}
                         <button
                             type="button"
-                            className="absolute inset-0 w-full h-full bg-gray-900/60 backdrop-blur-md cursor-default"
+                            className="fixed inset-0 w-full h-full bg-gray-950/80 backdrop-blur-sm cursor-default transition-opacity animate-fade-in"
                             onClick={() => setShowModal(false)}
                             tabIndex={-1}
                             aria-hidden="true"
                         />
                         
-                        {/* Tarjeta del modal: en celular sube desde abajo estilo hoja nativa */}
-                        <div className="relative bg-white w-full max-w-2xl rounded-t-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-300 transform">
+                        {/* Tarjeta del modal: Caja flotante perfecta en celulares y escritorio */}
+                        <div className="relative bg-white w-full max-w-2xl rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden transition-all transform scale-100 z-10 my-auto">
                             
-                            {/* Botón de cerrar reubicado estéticamente para accesibilidad */}
+                            {/* Botón de cierre flotante ergonómico */}
                             <button 
                                 onClick={() => setShowModal(false)} 
-                                className="absolute top-4 right-4 sm:top-8 sm:right-8 p-2 text-gray-400 hover:bg-gray-100 rounded-full z-10 transition-colors"
+                                className="absolute top-5 right-5 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full z-20 transition-colors bg-white/80 backdrop-blur-sm shadow-sm"
+                                aria-label="Cerrar modal"
                             >
-                                <X size={20} className="sm:w-6 sm:h-6" />
+                                <X size={20} className="sm:w-5 sm:h-5" />
                             </button>
                             
-                            {/* Área con scroll interno optimizado para evitar atascos */}
-                            <div className="max-h-[85vh] sm:max-h-[80vh] overflow-y-auto p-1">
+                            {/* Área con scroll interno optimizado para el formulario */}
+                            <div className="max-h-[85vh] overflow-y-auto p-2 sm:p-4">
                                 <FormularioSancion 
-                                    onBack={() => setShowModal(false)} 
-                                    onSuccess={handleSuccess} 
-                                    sancionParaEditar={sancionAEditar} 
+                                    onBack={() => setShowModal(false)}
+                                    onSuccess={handleSuccess}
+                                    sancionParaEditar={sancionAEditar}
                                 />
                             </div>
                         </div>
