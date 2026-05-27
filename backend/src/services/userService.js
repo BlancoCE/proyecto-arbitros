@@ -151,10 +151,14 @@ const userService = {
 
   deleteAsesor: async (id_asesor) => {
     try {
-      return await userModel.deleteAsesor(id);
+      const result = await userModel.deleteUsuario(pool, id_asesor);
+      
+      if (result.rowCount === 0) {
+        throw new Error("Asesor no encontrado");
+      }
+      return result;
     } catch (e) {
-      console.error(`Error al eliminar el asesor`, e);
-      throw new Error("No se pudo eliminar el asesor.");
+      throw e;
     }
   },
 
