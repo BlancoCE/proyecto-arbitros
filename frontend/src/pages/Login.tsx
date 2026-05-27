@@ -12,7 +12,17 @@ const LoginPage = () => {
   const generarCaptcha = () => {
     const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let res = '';
-    for (let i = 0; i < 4; i++) res += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    
+    // Creamos un array de enteros de 32 bits sin signo para la criptografía aleatoria
+    const valoresAleatorios = new Uint32Array(4);
+    window.crypto.getRandomValues(valoresAleatorios);
+
+    for (let i = 0; i < 4; i++) {
+      // Usamos el valor criptográfico en lugar de Math.random()
+      const indice = valoresAleatorios[i] % caracteres.length;
+      res += caracteres.charAt(indice);
+    }
+    
     setCaptchaSistema(res);
   };
 
