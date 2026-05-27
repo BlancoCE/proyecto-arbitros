@@ -2,7 +2,7 @@ const userModel = require('../models/userModel');
 const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -151,14 +151,10 @@ const userService = {
 
   deleteAsesor: async (id_asesor) => {
     try {
-      const result = await userModel.deleteUsuario(pool, id_asesor);
-      
-      if (result.rowCount === 0) {
-        throw new Error("Asesor no encontrado");
-      }
-      return result;
+      return await userModel.deleteAsesor(id);
     } catch (e) {
-      throw e;
+      console.error(`Error al eliminar el asesor`, e);
+      throw new Error("No se pudo eliminar el asesor.");
     }
   },
 
@@ -236,4 +232,4 @@ const userService = {
   }
 };
 
-module.exports = userService, transporter;
+module.exports = {userService, transporter};
