@@ -12,7 +12,7 @@ const licenciaController = {
     },
 
     crear: async (req, res) => {
-        let url_carta = req.file ? `../../uploads/licencias/${req.file.filename}` : null;
+        let url_carta = req.file ? `/uploads/licencias/${req.file.filename}` : null;
         try {
             const data = { ...req.body, url_carta };
             const nueva = await licenciaService.registrarLicencia(data);
