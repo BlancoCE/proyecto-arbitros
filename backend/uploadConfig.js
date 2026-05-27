@@ -33,7 +33,8 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     // Nombre único para evitar sobrescritura
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const randomHex = crypto.randomBytes(4).toString('hex');
+    const uniqueSuffix = Date.now() + '-' + randomHex;
     cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
   }
 });
