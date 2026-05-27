@@ -79,6 +79,7 @@ const ModalEditarAsesor: React.FC<Props> = ({ isOpen, onClose, asesor, onSuccess
         onSuccess();
         onClose();
       } catch (error) {
+        console.error("Error al eliminar el asesor:", error);
         alert("Error al eliminar el registro.");
       }
     }
@@ -140,7 +141,7 @@ const ModalEditarAsesor: React.FC<Props> = ({ isOpen, onClose, asesor, onSuccess
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
             {/* 1. Nombre de Usuario */}
             <div className="col-span-1 md:col-span-2 space-y-1">
-              <label className={labelStyle}>Nombre de Usuario (Login)</label>
+              <span className={labelStyle}>Nombre de Usuario (Login)</span>
               <div className="relative">
                 <UserCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                 <input name="nombre_usuario" defaultValue={asesor.nombre_usuario} className={`${inputStyle} pl-10`} required />
@@ -149,27 +150,27 @@ const ModalEditarAsesor: React.FC<Props> = ({ isOpen, onClose, asesor, onSuccess
 
             {/* 2. CI y 3. Nombres */}
             <div className="space-y-1">
-              <label className={labelStyle}>Cédula de Identidad</label>
+              <span className={labelStyle}>Cédula de Identidad</span>
               <input name="ci" defaultValue={asesor.ci} className={inputStyle} required />
             </div>
             <div className="space-y-1">
-              <label className={labelStyle}>Nombre(s)</label>
+              <span className={labelStyle}>Nombre(s)</span>
               <input name="nombre" defaultValue={asesor.nombre} className={inputStyle} required />
             </div>
 
             {/* 4. Apellido Paterno y 5. Apellido Materno */}
             <div className="space-y-1">
-              <label className={labelStyle}>Apellido Paterno</label>
+              <span className={labelStyle}>Apellido Paterno</span>
               <input name="apellido_paterno" defaultValue={asesor.apellido_paterno} className={inputStyle} required />
             </div>
             <div className="space-y-1">
-              <label className={labelStyle}>Apellido Materno</label>
+              <span className={labelStyle}>Apellido Materno</span>
               <input name="apellido_materno" defaultValue={asesor.apellido_materno} className={inputStyle} />
             </div>
             
             {/* 6. Fecha de Nacimiento y 7. Género */}
             <div className="space-y-1">
-              <label className={labelStyle}>Fecha de Nacimiento</label>
+              <span className={labelStyle}>Fecha de Nacimiento</span>
               <input 
                 type="date" 
                 name="fecha_nacimiento" 
@@ -178,7 +179,7 @@ const ModalEditarAsesor: React.FC<Props> = ({ isOpen, onClose, asesor, onSuccess
               />
             </div>
             <div className="space-y-1">
-              <label className={labelStyle}>Género</label>
+              <span className={labelStyle}>Género</span>
               <select name="genero" defaultValue={asesor.genero} className={inputStyle}>
                 <option value="Masculino">Masculino</option>
                 <option value="Femenino">Femenino</option>
@@ -187,7 +188,7 @@ const ModalEditarAsesor: React.FC<Props> = ({ isOpen, onClose, asesor, onSuccess
 
             {/* 8. Email */}
             <div className="col-span-1 md:col-span-2 space-y-1">
-              <label className={labelStyle}>Correo Electrónico</label>
+              <span className={labelStyle}>Correo Electrónico</span>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                 <input name="email" type="email" defaultValue={asesor.email} className={`${inputStyle} pl-10`} />
@@ -196,11 +197,11 @@ const ModalEditarAsesor: React.FC<Props> = ({ isOpen, onClose, asesor, onSuccess
 
             {/* 9. Teléfono y 10. Estado */}
             <div className="space-y-1">
-              <label className={labelStyle}>Teléfono</label>
+              <span className={labelStyle}>Teléfono</span>
               <input name="telefono" defaultValue={asesor.telefono} className={inputStyle} />
             </div>
             <div className="space-y-1">
-              <label className={labelStyle}>Estado de Cuenta</label>
+              <span className={labelStyle}>Estado de Cuenta</span>
               <select name="estado" defaultValue={asesor.estado} className={inputStyle}>
                 <option value="Activo">Activo</option>
                 <option value="Inactivo">Inactivo</option>
@@ -209,7 +210,7 @@ const ModalEditarAsesor: React.FC<Props> = ({ isOpen, onClose, asesor, onSuccess
 
             {/* 11. ROL DEL ASESOR (Roles específicos solicitados) */}
             <div className="col-span-1 md:col-span-2 space-y-1">
-              <label className={labelStyle}>Rol Administrativo en el Sistema</label>
+              <span className={labelStyle}>Rol Administrativo en el Sistema</span>
               <select name="rol" defaultValue={asesor.rol} className={`${inputStyle} bg-indigo-50/30 border-indigo-100 focus:ring-indigo-600`}>
                 <option value="Administrador">Administrador</option>
                 <option value="Secretaría General">Secretaría General</option>
