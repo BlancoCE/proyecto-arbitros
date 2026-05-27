@@ -111,9 +111,11 @@ const ModalEditarAsesor: React.FC<Props> = ({ isOpen, onClose, asesor, onSuccess
 
           {/* FOTO SECCIÓN */}
           <div className="flex flex-col items-center gap-3">
-            <div 
-              className="relative w-28 h-28 cursor-pointer group" 
+            <button
+              type="button"
+              className="relative w-28 h-28 cursor-pointer group rounded-[2.5rem] p-0 bg-transparent border-0 outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               onClick={() => fileInputRef.current?.click()}
+              aria-label="Actualizar fotografía de perfil"
             >
               <div className="w-full h-full rounded-[2.5rem] overflow-hidden border-4 border-slate-50 shadow-inner bg-slate-100">
                 {previewUrl ? (
@@ -127,7 +129,7 @@ const ModalEditarAsesor: React.FC<Props> = ({ isOpen, onClose, asesor, onSuccess
               <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 rounded-[2.5rem] transition-opacity">
                 <Camera className="text-white" size={24} />
               </div>
-            </div>
+            </button>
             <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={(e) => {
               const file = e.target.files?.[0];
               if(file) {

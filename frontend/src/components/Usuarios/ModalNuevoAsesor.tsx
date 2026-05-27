@@ -91,9 +91,11 @@ const ModalNuevoAsesor: React.FC<ModalProps> = ({ isOpen, onClose, onSuccess }) 
 
           {/* FOTO */}
           <div className="flex flex-col items-center gap-4">
-            <div 
+            <button
+              type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-32 h-32 rounded-[2.5rem] bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden cursor-pointer hover:border-indigo-500 transition-all group relative"
+              className="w-32 h-32 rounded-[2.5rem] bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden cursor-pointer hover:border-indigo-500 transition-all group relative p-0 outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              aria-label="Cambiar fotografía"
             >
               {previewUrl ? (
                 <img src={previewUrl} className="w-full h-full object-cover" alt="Preview" />
@@ -103,7 +105,7 @@ const ModalNuevoAsesor: React.FC<ModalProps> = ({ isOpen, onClose, onSuccess }) 
               <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                 <span className="text-[8px] text-white font-black uppercase">Cambiar</span>
               </div>
-            </div>
+            </button>
             <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
           </div>
 

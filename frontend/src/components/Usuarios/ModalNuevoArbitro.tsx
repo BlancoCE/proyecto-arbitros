@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { X, Upload, Save, User, Mail, Phone, ShieldCheck, NotebookPen, Key, UserCircle, Camera, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, Save, User, Mail, Phone, ShieldCheck, NotebookPen, Key, UserCircle, Camera, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 
 interface ModalProps {
@@ -10,7 +10,7 @@ interface ModalProps {
 
 const ModalNuevoArbitro: React.FC<ModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const URL_BACKEND = `${import.meta.env.VITE_API_URL}`;
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selecteImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<{ msg: string, type: 'error' | 'success' } | null>(null);
@@ -102,9 +102,11 @@ const ModalNuevoArbitro: React.FC<ModalProps> = ({ isOpen, onClose, onSuccess })
           
           {/* 1. FOTOGRAFÍA (Ubicación central superior) */}
           <div className="flex flex-col items-center gap-3">
-            <div 
-              className="relative w-28 h-28 cursor-pointer group" 
+            <button
+              type="button"
+              className="relative w-28 h-28 cursor-pointer group rounded-[2.5rem] p-0 bg-transparent border-0 outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               onClick={() => fileInputRef.current?.click()}
+              aria-label="Cambiar foto de perfil"
             >
               <div className="w-full h-full rounded-[2.5rem] overflow-hidden border-4 border-slate-50 shadow-inner bg-slate-100 flex items-center justify-center transition-transform group-hover:scale-105">
                 {previewUrl ? (
@@ -116,7 +118,7 @@ const ModalNuevoArbitro: React.FC<ModalProps> = ({ isOpen, onClose, onSuccess })
               <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 rounded-[2.5rem] transition-opacity text-white text-[9px] font-black uppercase">
                 Cambiar Foto
               </div>
-            </div>
+            </button>
             <input ref={fileInputRef} type="file" name="foto" className="hidden" accept="image/*" onChange={handleFileChange} />
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Foto de perfil oficial</span>
           </div>

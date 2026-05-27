@@ -130,16 +130,12 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
           
           {/* FOTOGRAFÍA */}
           <div className="flex flex-col items-center gap-3">
-            
-            {/* CORRECCIÓN SONARQUBE: Se cambia 'div' por 'button' con type="button" para cumplir con accesibilidad. 
-                Agregamos p-0, bg-transparent, border-0 y outline-none para que conserve la apariencia limpia de tu diseño original. */}
             <button
               type="button"
               className="relative w-28 h-28 cursor-pointer group rounded-[2.5rem] p-0 bg-transparent border-0 outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               onClick={() => fileInputRef.current?.click()}
               aria-label="Cambiar foto de perfil"
             >
-              {/* Todo tu diseño interno original se mantiene intacto aquí dentro */}
               <div className="w-full h-full rounded-[2.5rem] overflow-hidden border-4 border-slate-50 shadow-inner bg-slate-100 flex items-center justify-center transition-transform group-hover:scale-105">
                 <img 
                   src={selectedImage || '/default-avatar.png'} 
@@ -151,7 +147,6 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
                 <Camera size={24} />
               </div>
             </button>
-
             <input 
               ref={fileInputRef} 
               name="foto" 
