@@ -55,13 +55,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // 3. PROTECCIÓN Y SEGMENTACIÓN DE ARCHIVOS ESTÁTICOS
 // Las fotos de perfil las dejamos públicas para que los avatars carguen libremente
-app.use('/uploads/fotos', express.static(path.join(__dirname, 'uploads/fotos')));
-
-// Las carpetas con datos confidenciales de los árbitros se protegen con tu token JWT
-app.use('/uploads/informes', verificarToken, express.static(path.join(__dirname, 'uploads/informes')));
-app.use('/uploads/licencias', verificarToken, express.static(path.join(__dirname, 'uploads/licencias')));
-app.use('/uploads/sanciones', verificarToken, express.static(path.join(__dirname, 'uploads/sanciones')));
-app.use('/uploads/otros', verificarToken, express.static(path.join(__dirname, 'uploads/otros')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // RUTAS CENTRALIZADAS
 app.use('/api', userRoutes);    // Maneja /api/login, /api/asesores, /api/arbitros
