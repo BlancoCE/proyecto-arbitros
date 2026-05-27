@@ -72,7 +72,7 @@ const LoginPage = () => {
     if (!email) return;
 
     try {
-      const response = await fetch('${import.meta.env.VITE_API_URL}/api/forgot-password', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
