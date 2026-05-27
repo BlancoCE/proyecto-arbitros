@@ -72,6 +72,7 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
         setStatus({ msg: `❌ ${err.message || "Error al actualizar"}`, type: 'error' });
       }
     } catch (error) {
+      console.error("Error en la petición de actualización:", error);
       setStatus({ msg: "🚀 Error de conexión con el servidor", type: 'error' });
     } finally {
       setIsSubmitting(false);
@@ -79,7 +80,9 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
   };
 
   const handleDelete = async () => {
-    if (window.confirm(`¿Estás seguro de eliminar permanentemente al árbitro ${arbitro.nombre} y su cuenta de usuario?`)) {
+    if (!arbitro) return;
+    if (globalThis.confirm(`¿Estás seguro de eliminar permanentemente al árbitro ${arbitro.nombre} y su cuenta de usuario?`)) {
+      setIsSubmitting(true);
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/arbitros/${arbitro.id_arbitro}`, {
           method: 'DELETE',
