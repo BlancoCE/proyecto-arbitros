@@ -59,6 +59,16 @@ export default function MainLayout() {
         <div 
           className="fixed inset-0 bg-black/50 z-40 md:hidden animate-in fade-in duration-300"
           onClick={() => setMobileMenuOpen(false)}
+          onKeyDown={(e) => {
+            // Permite cerrar el menú lateral al presionar Enter o la barra espaciadora
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setMobileMenuOpen(false);
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Cerrar menú de navegación"
         />
       )}
 
