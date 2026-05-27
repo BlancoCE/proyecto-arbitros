@@ -13,7 +13,6 @@ const Designaciones: React.FC = () => {
     const [selectedPartido, setSelectedPartido] = useState<any>(null);
     const [verHistorial, setVerHistorial] = useState<any>(null);
     const [loadingArbitros, setLoadingArbitros] = useState(false);
-    const [fechaExportar, setFechaExportar] = useState(new Date().toISOString().split('T')[0]);
     const [filtros, setFiltros] = useState({ 
         liga: '', 
         categoria: '', 
@@ -244,7 +243,17 @@ const Designaciones: React.FC = () => {
                     {historial.map(p => (
                         <div 
                             key={p.id_partido}
+                            // --- CORRECCIÓN DE ACCESIBILIDAD PARA SONARQUBE ---
                             onClick={() => setVerHistorial(p)} // Abrir modal de solo lectura
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    setVerHistorial(p);
+                                }
+                            }}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`Ver detalles del partido ${p.equipo_local} contra ${p.equipo_visitante}`}
                             className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 hover:border-indigo-300 transition-all cursor-pointer group"
                         >
                             <div className="text-[10px] font-black text-gray-400 uppercase mb-2">{p.torneo}</div>
@@ -291,6 +300,15 @@ const TarjetaPartido = ({ partido, onClick, esEdicion, icon }: any) => {
     return (
         <div 
             onClick={() => onClick(partido)}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onClick(partido);
+                }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`Gestionar designación de ${partido.equipo_local} contra ${partido.equipo_visitante}`}
             className={`bg-white p-6 rounded-[2.5rem] shadow-sm border ${
                 conConflicto ? 'border-amber-200 bg-amber-50/30' : 'border-slate-100'
             } hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer group relative overflow-hidden`}
