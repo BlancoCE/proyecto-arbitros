@@ -130,10 +130,16 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
           
           {/* FOTOGRAFÍA */}
           <div className="flex flex-col items-center gap-3">
-            <div 
-              className="relative w-28 h-28 cursor-pointer group" 
+            
+            {/* CORRECCIÓN SONARQUBE: Se cambia 'div' por 'button' con type="button" para cumplir con accesibilidad. 
+                Agregamos p-0, bg-transparent, border-0 y outline-none para que conserve la apariencia limpia de tu diseño original. */}
+            <button
+              type="button"
+              className="relative w-28 h-28 cursor-pointer group rounded-[2.5rem] p-0 bg-transparent border-0 outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               onClick={() => fileInputRef.current?.click()}
+              aria-label="Cambiar foto de perfil"
             >
+              {/* Todo tu diseño interno original se mantiene intacto aquí dentro */}
               <div className="w-full h-full rounded-[2.5rem] overflow-hidden border-4 border-slate-50 shadow-inner bg-slate-100 flex items-center justify-center transition-transform group-hover:scale-105">
                 <img 
                   src={selectedImage || '/default-avatar.png'} 
@@ -144,7 +150,8 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
               <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 rounded-[2.5rem] transition-opacity text-white">
                 <Camera size={24} />
               </div>
-            </div>
+            </button>
+
             <input 
               ref={fileInputRef} 
               name="foto" 
@@ -164,7 +171,7 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
             <h3 className={sectionTitle}><UserCircle size={14}/> Acceso al Sistema</h3>
             <div className="grid grid-cols-1 gap-4">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Nombre de Usuario (Login)</span>
+                <label className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Nombre de Usuario (Login)</label>
                 <div className="relative">
                   <UserCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                   <input name="nombre_usuario" defaultValue={arbitro.nombre_usuario} className={`${inputStyle} pl-10`} required />
@@ -178,30 +185,30 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
             <h3 className={sectionTitle}><User size={14}/> Datos Personales</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Cédula de Identidad</span>
+                <label className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Cédula de Identidad</label>
                 <input name="ci" defaultValue={arbitro.ci} className={inputStyle} required />
               </div>
               <div className="md:col-span-2 space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Nombres Completos</span>
+                <label className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Nombres Completos</label>
                 <input name="nombre" defaultValue={arbitro.nombre} className={inputStyle} required />
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Ap. Paterno</span>
+                <label className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Ap. Paterno</label>
                 <input name="apellido_paterno" defaultValue={arbitro.apellido_paterno} className={inputStyle} required />
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Ap. Materno</span>
+                <label className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Ap. Materno</label>
                 <input name="apellido_materno" defaultValue={arbitro.apellido_materno} className={inputStyle} />
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Género</span>
+                <label className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Género</label>
                 <select name="genero" defaultValue={arbitro.genero} className={inputStyle}>
                   <option value="Masculino">Masculino</option>
                   <option value="Femenino">Femenino</option>
                 </select>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Fecha de Nacimiento</span>
+                <label className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Fecha de Nacimiento</label>
                 <input type="date" name="fecha_nacimiento" defaultValue={arbitro.fecha_nacimiento ? arbitro.fecha_nacimiento.split('T')[0] : ''} className={inputStyle} />
               </div>
             </div>
@@ -212,14 +219,14 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
             <h3 className={sectionTitle}><Phone size={14}/> Contacto</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Correo Electrónico</span>
+                <label className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Correo Electrónico</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                   <input name="email" type="email" defaultValue={arbitro.email} className={`${inputStyle} pl-10`} />
                 </div>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Teléfono</span>
+                <label className="text-[10px] font-bold ml-1 text-slate-500 uppercase">Teléfono</label>
                 <input name="telefono" defaultValue={arbitro.telefono} className={inputStyle} />
               </div>
             </div>
@@ -230,7 +237,7 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
             <h3 className={sectionTitle}><NotebookPen size={14}/> Clasificación y Estado</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-indigo-50/30 p-6 rounded-[2rem] border border-indigo-100/50">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-indigo-600 uppercase italic tracking-tighter">Categoría</span>
+                <label className="text-[10px] font-bold ml-1 text-indigo-600 uppercase italic tracking-tighter">Categoría</label>
                 <select name="categoria" defaultValue={arbitro.categoria} className={`${inputStyle} border-indigo-100 shadow-none`}>
                   <option value="FIFA">FIFA</option>
                   <option value="Primera">Primera</option>
@@ -240,7 +247,7 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
                 </select>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-indigo-600 uppercase italic tracking-tighter">Especialización</span>
+                <label className="text-[10px] font-bold ml-1 text-indigo-600 uppercase italic tracking-tighter">Especialización</label>
                 <select name="especializacion" defaultValue={arbitro.especializacion} className={`${inputStyle} border-indigo-100 shadow-none`}>
                   <option value="Ambas">Ambas</option>
                   <option value="Central">Central</option>
@@ -248,7 +255,7 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
                 </select>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-bold ml-1 text-indigo-600 uppercase italic tracking-tighter">Estado Administrativo</span>
+                <label className="text-[10px] font-bold ml-1 text-indigo-600 uppercase italic tracking-tighter">Estado Administrativo</label>
                 <select name="estado" defaultValue={arbitro.estado} className={`${inputStyle} border-indigo-100 shadow-none`}>
                   <option value="Activo">Activo</option>
                   <option value="Inactivo">Inactivo</option>
