@@ -92,6 +92,7 @@ const ModalEditarArbitro: React.FC<Props> = ({ isOpen, onClose, arbitro, onSucce
           onClose();
         }
       } catch (error) {
+        console.error("Error en la petición de actualización:", error);
         setStatus({ msg: "❌ Error al eliminar el registro", type: 'error' });
       }
     }
