@@ -11,7 +11,8 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 # 5. Copiamos el resto del código (Docker ya sabe qué ignorar gracias al .dockerignore)
-COPY . .
+COPY src/ ./src/
+COPY index.js ./
 
 # 6. SEGURIDAD: Cambiamos al usuario 'node' que viene integrado en la imagen para no usar root
 USER node
