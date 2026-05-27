@@ -1,24 +1,23 @@
-# 1. Usamos una versión específica y más ligera (alpine) para reducir la superficie de ataque
 FROM node:18-alpine
 
-# 2. Establecemos el directorio de trabajo
 WORKDIR /app
 
-# 3. Copiamos los archivos de dependencias
+# Copiamos los archivos de configuración de dependencias
 COPY package*.json ./
 
-# 4. Instalamos solo lo necesario para producción (ignora devDependencies si las hubiera)
+# Instalamos dependencias de producción
 RUN npm ci --only=production
 
-# 5. Copiamos el resto del código (Docker ya sabe qué ignorar gracias al .dockerignore)
+# --- SOLUCIÓN PARA LA LÍNEA ROJA ---
+# En lugar de COPY . ., copiamos explícitamente solo lo necesario de tu proyecto:
 COPY src/ ./src/
 COPY index.js ./
 
-# 6. SEGURIDAD: Cambiamos al usuario 'node' que viene integrado en la imagen para no usar root
-USER node
+# Si tienes carpetas adicionales descomenta las siguientes líneas según corresponda:
+# COPY config/ ./config/
+# COPY uploads/ ./uploads/
 
-# 7. Exponemos el puerto de tu API
+USER node
 EXPOSE 3001
 
-# 8. Comando de arranque
 CMD ["node", "index.js"]
