@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShieldAlert, Save, User, Calendar, Info, AlertCircle, RefreshCw, FileText, UploadCloud, Trash2 } from 'lucide-react';
+import { ShieldAlert, Save, Info, AlertCircle, RefreshCw, FileText, UploadCloud, Trash2 } from 'lucide-react';
 import axios from 'axios';
 
 interface Arbitro {
@@ -245,12 +245,22 @@ const FormularioSancion: React.FC<FormularioProps> = ({ onSuccess, onBack, sanci
                     />
                 </div>
 
-                {/* --- SECCIÓN DE CARGA DE DOCUMENTO (EL FALLO) --- */}
+                {/* --- SECCIÓN DE CARGA DE DOCUMENTO (EL FALLO) ---  */}
                 <div className="flex flex-col gap-2">
                     <label className="text-[10px] font-black text-gray-400 uppercase ml-1">Fallo del Tribunal de Penas (PDF / Imagen)</label>
                     {!previewNombre ? (
                         <div 
                             onClick={() => fileInputRef.current?.click()}
+                            onKeyDown={(e) => {
+                                // Permite activar la carga de archivos presionando Enter o Espacio
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    fileInputRef.current?.click();
+                                }
+                            }}
+                            role="button"
+                            tabIndex={0}
+                            aria-label="Subir archivo"
                             className="w-full border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-2 hover:border-red-400 hover:bg-red-50/30 cursor-pointer transition-all group"
                         >
                             <div className="p-3 bg-gray-50 rounded-full text-gray-400 group-hover:text-red-500 group-hover:bg-red-50 transition-colors">

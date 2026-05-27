@@ -1,0 +1,18 @@
+# Evitar subir variables de entorno y credenciales
+.env
+.env.*
+*.local
+.git
+.gitignore
+
+# Evitar duplicar dependencias locales (¡muy importante!)
+node_modules
+npm-debug.log*
+
+# Evitar archivos de configuración del entorno de desarrollo o logs
+.vscode/
+.idea/
+dist/
+build/
+logs/
+*.md
