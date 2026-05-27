@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { X, Save, User, Mail, Upload, Trash2, UserCircle, Camera, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { X, Save, Mail, Trash2, UserCircle, Camera, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { Asesor } from './Asesores';
 
 interface Props {

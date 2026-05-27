@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import { X, Save, User, Mail, Phone, ShieldCheck, Lock, UserCircle, Settings, Camera, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { X, Save, User, Mail, Lock, UserCircle, Camera, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 interface ModalProps {
   isOpen: boolean;

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Save, Mail, Upload, Trash2, NotebookPen, UserCircle, Camera, CheckCircle2, AlertCircle, Loader2, Phone, ShieldCheck, User } from 'lucide-react';
+import { X, Save, Mail, Trash2, NotebookPen, UserCircle, Camera, CheckCircle2, AlertCircle, Loader2, Phone, User } from 'lucide-react';
 
 interface Arbitro {
   id_arbitro: number;
