@@ -96,12 +96,26 @@ const Dashboard = () => {
         <p className="text-blue-100 mt-2">Panel de Control de Arbitraje • {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
       </div>
 
-      {/* Grid de Estadísticas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, i) => (
+        {stats.map((stat) => (
           <div 
-            key={i} 
-            onClick={stat.action ? stat.action : undefined}
+            // 1. Solución Key: Usamos la etiqueta que es única en lugar del índice 'i'
+            key={stat.label} 
+            
+            // 2. Solución Ternaria: Simplificamos usando el operador Nullish Coalescing (??)
+            onClick={stat.action ?? undefined}
+            
+            // 3. Solución Accesibilidad: Añadimos soporte para navegación y pulsación por teclado
+            onKeyDown={(e) => {
+              if (stat.action && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                stat.action();
+              }
+            }}
+            role={stat.action ? "button" : undefined}
+            tabIndex={stat.action ? 0 : undefined}
+            aria-label={stat.action ? `Ver detalles de ${stat.label}` : undefined}
+
             className={`bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-between border border-gray-100 ${stat.action ? 'cursor-pointer border-red-100' : ''}`}
           >
             <div>

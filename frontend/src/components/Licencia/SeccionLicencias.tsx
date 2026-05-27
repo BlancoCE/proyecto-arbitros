@@ -34,21 +34,21 @@ const SeccionLicencias: React.FC<Props> = ({ refreshKey, onEdit }) => {
     };
 
     const verDocumento = (urlRelativa: string) => {
-    if (!urlRelativa) return;
+        if (!urlRelativa) return;
 
-    // 1. Limpiamos cualquier residuo de puntos o barras duplicadas que vengan de la DB
-    // Cambia "../..", "..", etc. por una cadena vacía, y asegura que empiece con /
-    let rutaLimpia = urlRelativa.replace(/^(\.\.\/)+/, ''); 
-    if (!rutaLimpia.startsWith('/')) {
-        rutaLimpia = '/' + rutaLimpia;
-    }
+        // 1. Limpiamos cualquier residuo de puntos o barras duplicadas que vengan de la DB
+        // Cambia "../..", "..", etc. por una cadena vacía, y asegura que empiece con /
+        let rutaLimpia = urlRelativa.replace(/^(\.\.\/)+/, ''); 
+        if (!rutaLimpia.startsWith('/')) {
+            rutaLimpia = '/' + rutaLimpia;
+        }
 
-    // 2. Concatenamos de forma segura con la URL del Backend
-    const urlAbsoluta = `${import.meta.env.VITE_API_URL}${rutaLimpia}`;
-    
-    // 3. Abrimos la ventana
-    window.open(urlAbsoluta, '_blank');
-};
+        // 2. Concatenamos de forma segura con la URL del Backend
+        const urlAbsoluta = `${import.meta.env.VITE_API_URL}${rutaLimpia}`;
+        
+        // 3. Abrimos la ventana
+        window.open(urlAbsoluta, '_blank');
+    };
 
     const filtrar = (lista: any[]) => {
         return lista.filter(l => 
