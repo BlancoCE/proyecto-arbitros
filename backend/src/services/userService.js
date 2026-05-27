@@ -233,7 +233,7 @@ const userService = {
 
     // 3. Actualizar en la BD y limpiar el token
     return await userModel.updatePasswordWithToken(user.id_usuario, hash);
-  }
+  },
 };
 
-module.exports = {userService, transporter};
+module.exports = userService, transporter;
