@@ -110,16 +110,6 @@ const asistenciaModel = {
         const res = await pool.query(sql);
         return res.rows;
     },
-
-    justificarFalta: async (id_asistencia, motivo) => {
-        // Usamos el motivo como comentario o simplemente marcamos true
-        const sql = `
-            UPDATE ASISTENCIA 
-            SET justificado = true, estado = 'Licencia'
-            WHERE id_asistencia = $1
-        `;
-        await pool.query(sql, [id_asistencia]);
-    },
     
     getDetalleFaltas: async (id_arbitro) => {
         const sql = `

@@ -90,4 +90,4 @@ const justificar = async (req, res) => {
     }
 };
 
-module.exports = { listarArbitros, registrar, historial, obtenerResumen, justificar, detalleFaltas, justificar };
+module.exports = { listarArbitros, registrar, historial, obtenerResumen, justificar, detalleFaltas };

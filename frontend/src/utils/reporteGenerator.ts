@@ -17,7 +17,7 @@ export const exportarDesignacionesPDF = (listaPartidos: any[], rango: { inicio: 
 
     // Agrupamiento: Fecha > Categoría > Ubicación
     const agrupados = listaPartidos.reduce((acc: any, p: any) => {
-        const fecha = p.fecha.split('T')[0];
+        const fecha = p.fecha ? p.fecha.split('T')[0] : "SIN FECHA";
         const cat = p.categoria || "SIN CATEGORIA";
         const ubi = p.ubicacion || "POR DEFINIR";
         
@@ -31,55 +31,57 @@ export const exportarDesignacionesPDF = (listaPartidos: any[], rango: { inicio: 
 
     let finalY = 30;
 
-    // Ordenar fechas cronológicamente
-    const fechasOrdenadas = Object.keys(agrupados).sort();
+    // CORRECCIÓN SONARQUBE: Uso de localeCompare para garantizar ordenamiento confiable de las llaves de fecha
+    const fechasOrdenadas = Object.keys(agrupados).sort((a, b) => a.localeCompare(b, 'es'));
 
     fechasOrdenadas.forEach((fecha) => {
-        // Encabezado de FECHA (Separador principal)
-        doc.setFontSize(12);
-        doc.setTextColor(255, 255, 255);
-        doc.setFillColor(30, 41, 59); // Slate-800
-        doc.rect(14, finalY, pageWidth - 28, 10, 'F');
-        doc.text(fecha, pageWidth / 2, finalY + 7, { align: 'center' });
-        finalY += 15;
+        const categorias = Object.keys(agrupados[fecha]).sort((a, b) => a.localeCompare(b, 'es'));
 
-        Object.keys(agrupados[fecha]).forEach((categoria) => {
-            // Título de Categoría
-            doc.setFontSize(10);
-            doc.setTextColor(79, 70, 229); // Indigo-600
-            doc.text(categoria.toUpperCase(), 14, finalY);
-            finalY += 5;
+        categorias.forEach((categoria) => {
+            const canchas = Object.keys(agrupados[fecha][categoria]).sort((a, b) => a.localeCompare(b, 'es'));
 
-            Object.keys(agrupados[fecha][categoria]).forEach((cancha) => {
-                // Título de Cancha
-                doc.setFontSize(8);
-                doc.setTextColor(100, 100, 100);
-                doc.text(`CANCHA: ${cancha.toUpperCase()}`, 14, finalY);
-                finalY += 3;
+            canchas.forEach((cancha) => {
+                // Verificar espacio en la página actual antes de imprimir bloques de cabecera
+                if (finalY > 240) {
+                    doc.addPage();
+                    finalY = 20;
+                }
+
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(9);
+                doc.setTextColor(30, 41, 59); // color slate-800
+                doc.text(`FECHA: ${fecha} | CATEGORIA: ${categoria} | CANCHA: ${cancha.toUpperCase()}`, 14, finalY);
+                finalY += 4;
+
+                // CORRECCIÓN SONARQUBE / ADAPTABILIDAD: 
+                // Delegamos la extracción de datos de la fila a un mapeo adaptativo controlado
+                const filasTabla = agrupados[fecha][categoria][cancha].map((p: any) => {
+                    const horaFormateada = p.hora ? p.hora.substring(0, 5) : "00:00";
+                    const local = p.equipo_local || "POR DEFINIR";
+                    const visitante = p.equipo_visitante || "POR DEFINIR";
+                    const ternaFormateada = formatTerna(p.terna_nombres);
+
+                    return [
+                        horaFormateada,
+                        local,
+                        'VS',
+                        visitante,
+                        ternaFormateada
+                    ];
+                });
 
                 autoTable(doc, {
                     startY: finalY,
                     head: [['HORA', 'LOCAL', 'VS', 'VISITANTE', 'TERNA ARBITRAL']],
-                    body: agrupados[fecha][categoria][cancha].map((p: any) => [
-                        p.hora.substring(0, 5),
-                        p.equipo_local,
-                        'VS',
-                        p.equipo_visitante,
-                        formatTerna(p.terna_nombres)
-                    ]),
+                    body: filasTabla,
                     theme: 'grid',
                     headStyles: { fillColor: [71, 85, 105], fontSize: 7 },
                     styles: { fontSize: 7, cellPadding: 1.5 },
                     columnStyles: { 0: { cellWidth: 15 }, 2: { cellWidth: 8 }, 4: { cellWidth: 55 } },
                     margin: { left: 14, right: 14 }
                 });
-                finalY = (doc as any).lastAutoTable.finalY + 8;
                 
-                // Salto de página si el contenido se acerca al final
-                if (finalY > 260) {
-                    doc.addPage();
-                    finalY = 20;
-                }
+                finalY = (doc as any).lastAutoTable.finalY + 8;
             });
         });
     });
@@ -87,13 +89,20 @@ export const exportarDesignacionesPDF = (listaPartidos: any[], rango: { inicio: 
     doc.save(`Designaciones_${rango.inicio}_al_${rango.fin}.pdf`);
 };
 
+// Función auxiliar adaptativa para formatear terna con validaciones de seguridad (Fallbacks)
 const formatTerna = (terna: any) => {
-    if (!terna) return "POR DESIGNAR";
+    if (!terna || typeof terna !== 'object') return "POR DESIGNAR";
+    
     const roles = [
-        { k: "Central", l: "ARB" },
-        { k: "Asistente 1", l: "A1" },
-        { k: "Asistente 2", l: "A2" },
-        { k: "Cuarto Árbitro", l: "4to" }
+        { k: "Central", label: "A:" },
+        { k: "Asistente 1", label: "A1:" },
+        { k: "Asistente 2", label: "A2:" },
+        { k: "Cuarto Árbitro", label: "4to:" }
     ];
-    return roles.filter(r => terna[r.k]).map(r => `${r.l}: ${terna[r.k]}`).join(' | ');
+
+    const partes = roles
+        .map(r => terna[r.k] ? `${r.label} ${terna[r.k]}` : null)
+        .filter(Boolean);
+
+    return partes.length > 0 ? partes.join(' | ') : "POR DESIGNAR";
 };
