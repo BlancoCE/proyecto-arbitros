@@ -57,7 +57,13 @@ const Licencias: React.FC = () => {
                 {showModal && (
                     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
                         {/* Fondo opaco con desenfoque */}
-                        <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-md" onClick={() => setShowModal(false)} />
+                        <button
+                            type="button"
+                            className="absolute inset-0 w-full h-full bg-gray-900/60 backdrop-blur-md cursor-default"
+                            onClick={() => setShowModal(false)}
+                            tabIndex={-1}
+                            aria-hidden="true"
+                        />
                         
                         {/* Tarjeta del modal: en celular emerge desde abajo como hoja nativa */}
                         <div className="relative bg-white w-full max-w-2xl rounded-t-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden transition-all duration-300 transform">

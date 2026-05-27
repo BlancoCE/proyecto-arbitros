@@ -236,4 +236,6 @@ const userService = {
   },
 };
 
-module.exports = userService, transporter;
+userService.transporter = transporter;
+
+module.exports = userService;
