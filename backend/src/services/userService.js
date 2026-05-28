@@ -21,7 +21,7 @@ const userService = {
   // 1. LOGIN ACTUALIZADO (Para comparar hashes)
   login: async (usuario, password) => {
     // Buscamos al usuario solo por su nombre_usuario
-    const dbUser = await userModel.findUserByUsername(usuario);
+    const dbUser = await userModel.findUserWithRoles(usuario, password);
     
     if (!dbUser) throw new Error("Usuario o contraseña incorrectos");
     if (!dbUser.activo) throw new Error("Su cuenta está desactivada.");
