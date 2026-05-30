@@ -4,11 +4,6 @@ const cors = require('cors');
 const path = require('path');
 const helmet = require('helmet');
 
-// === NUEVA CONFIGURACIÓN DE SWAGGER (AUTOMÁTICA Y SEGURA) ===
-const swaggerUi = require('swagger-ui-express');
-// Importamos el JSON que generó 'swagger-autogen'
-const swaggerSpec = require('./swagger-output.json'); 
-
 // Importamos las rutas
 const userRoutes = require('./src/routes/userRoutes');
 const partidoRoutes = require('./src/routes/partidoRoutes');
@@ -30,45 +25,41 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" } 
+  crossOriginResourcePolicy: { policy: "cross-origin" } // Permite que el frontend cargue tus imágenes/archivos
 }));
 app.disable('x-powered-by');
 
 const allowedOrigins = [
-  'https://colegio-arbitros-lapaz.vercel.app', 
-  'http://localhost:5173' 
+  'http://localhost:5173', // Tu entorno de desarrollo local (Vite)
+  'https://proyecto-arbitros-b1xi.vercel.app' // Reemplaza con tu URL real de producción en Vercel
 ];
 
+// Middlewares
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    // Permitir peticiones sin origen (ej. Postman o llamadas internas del servidor)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('No permitido por CORS'));
+      callback(new Error('Acceso denegado por políticas de CORS (Colegio de Árbitros La Paz)'));
     }
   },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// === ENDPOINTS DE SWAGGER QUE UTILIZARÁ OWASP ZAP ===
-// Interface visual por si quieres revisarla en el navegador
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// Ruta que OWASP ZAP va a leer (Ahora mandará el JSON con todos los PATHS llenos)
-app.get('/api-docs-json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json(swaggerSpec);
-});
-
+// 3. PROTECCIÓN Y SEGMENTACIÓN DE ARCHIVOS ESTÁTICOS
 // Las fotos de perfil las dejamos públicas para que los avatars carguen libremente
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // RUTAS CENTRALIZADAS
-app.use('/api', userRoutes);    
-app.use('/api', partidoRoutes); 
+app.use('/api', userRoutes);    // Maneja /api/login, /api/asesores, /api/arbitros
+app.use('/api', partidoRoutes); // Maneja /api/partidos, /api/equipos-sugeridos
 app.use('/api', asistenciaRoutes);
 app.use('/api', pruebasFisicasRoutes);
 app.use('/api', pruebasEscritasRoutes);
@@ -79,7 +70,7 @@ app.use('/api', dashboardRoutes);
 app.use('/api', authRoutes);
 app.use('/api', evaluacionRoutes);
 app.use('/api', configuracionRoutes);
-app.use('/api', reporteRoutes);
+app.use('/api', reporteRoutes)
 
 // Manejo de errores global
 app.use((err, req, res, next) => {
@@ -90,10 +81,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
-  console.log(`Documentación de Swagger disponible en http://localhost:${PORT}/api-docs`);
-  console.log(`JSON estructurado disponible en http://localhost:${PORT}/api-docs-json`);
-});
+// 4. ESCUCHA CONDICIONAL DEL PUERTO (Solución Local vs Vercel)
+// Vercel inyecta automáticamente variables de entorno globales. Si no estamos en Vercel, corre el listen local.
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`✅ Servidor local corriendo de forma segura en: http://localhost:${PORT}`);
+  });
+}
 
+// Exportación requerida para que las Serverless Functions de Vercel controlen el ciclo de vida de la API
 module.exports = app;
