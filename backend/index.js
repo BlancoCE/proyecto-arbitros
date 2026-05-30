@@ -4,9 +4,10 @@ const cors = require('cors');
 const path = require('path');
 const helmet = require('helmet');
 
-// === CONFIGURACIÓN DE SWAGGER PARA OWASP ZAP ===
-const swaggerJSDoc = require('swagger-jsdoc');
+// === NUEVA CONFIGURACIÓN DE SWAGGER (AUTOMÁTICA Y SEGURA) ===
 const swaggerUi = require('swagger-ui-express');
+// Importamos el JSON que generó 'swagger-autogen'
+const swaggerSpec = require('./swagger-output.json'); 
 
 // Importamos las rutas
 const userRoutes = require('./src/routes/userRoutes');
@@ -29,62 +30,37 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" } // Permite que el frontend cargue tus imágenes/archivos
+  crossOriginResourcePolicy: { policy: "cross-origin" } 
 }));
 app.disable('x-powered-by');
 
 const allowedOrigins = [
-  'http://localhost:5173', // Tu entorno de desarrollo local (Vite)
-  'https://proyecto-arbitros-b1xi.vercel.app' // Tu URL real de producción en Vercel
+  'https://colegio-arbitros-lapaz.vercel.app', 
+  'http://localhost:5173' 
 ];
 
-// Middlewares
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('Acceso denegado por políticas de CORS (Colegio de Árbitros La Paz)'));
+      callback(new Error('No permitido por CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// === DEFINICIÓN DE LAS OPCIONES DE OPENAPI ===
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'API Colegio de Árbitros',
-      version: '1.0.0',
-      description: 'Documentación estructural de los endpoints de la plataforma web',
-    },
-    servers: [
-      {
-        url: 'https://api-colegio-arbitros.onrender.com', // Dirección de tu API en producción
-      },
-    ],
-  },
-  // Mapea la raíz y las subcarpetas de rutas para que ZAP las encuentre todas
-  apis: ['./index.js', './src/routes/*.js'], 
-};
-
-const swaggerSpec = swaggerJSDoc(swaggerOptions);
-
-// Endpoint visual interactivo (opcional para tu uso)
+// === ENDPOINTS DE SWAGGER QUE UTILIZARÁ OWASP ZAP ===
+// Interface visual por si quieres revisarla en el navegador
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// === RUTA CLAVE: El JSON puro que OWASP ZAP leerá para atacar ===
+// Ruta que OWASP ZAP va a leer (Ahora mandará el JSON con todos los PATHS llenos)
 app.get('/api-docs-json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
+  res.json(swaggerSpec);
 });
 
 // Las fotos de perfil las dejamos públicas para que los avatars carguen libremente
@@ -114,10 +90,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`✅ Servidor local corriendo de forma segura en: http://localhost:${PORT}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+  console.log(`Documentación de Swagger disponible en http://localhost:${PORT}/api-docs`);
+  console.log(`JSON estructurado disponible en http://localhost:${PORT}/api-docs-json`);
+});
 
 module.exports = app;
