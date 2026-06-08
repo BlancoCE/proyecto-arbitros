@@ -14,15 +14,6 @@ const transporter = nodemailer.createTransport({
   },
   tls: {
     rejectUnauthorized: true
-  },
-  // SOLUCIÓN CRÍTICA: Fuerza la resolución DNS interna a usar la familia 4 (IPv4)
-  connectionTimeout: 10000, // Evita esperas infinitas si se cae (10 segundos)
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
-  dnsLookup: (hostname, options, callback) => {
-    require('node:dns').lookup(hostname, { family: 4 }, (err, address, family) => {
-      callback(err, address, family);
-    });
   }
 });
 
