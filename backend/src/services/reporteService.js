@@ -1,44 +1,51 @@
 const reporteModel = require('../models/reporteModel');
 
 const reporteService = {
-    // Informe para un Árbitro
-    generarInformeDetallado: async (id_arbitro) => {
-        const [metricas, historial] = await Promise.all([
-            reporteModel.obtenerMetricasCualitativas(id_arbitro),
-            reporteModel.obtenerEvolucionTemporal(id_arbitro)
+    generarInformeDetallado: async (id_arbitro, anio) => {
+        const [metricas, lineal, escrito, fisico] = await Promise.all([
+            reporteModel.obtenerMetricasCualitativas(id_arbitro, anio),
+            reporteModel.obtenerEvolucionTemporal(id_arbitro, anio),
+            reporteModel.obtenerHistorialEscrito(id_arbitro, anio),
+            reporteModel.obtenerHistorialFisico(id_arbitro, anio)
         ]);
 
         return {
+            tipo: 'individual',
+            año: anio,
             resumen: metricas,
-            graficoLineal: historial,
+            graficoLineal: lineal,
+            historialEscrito: escrito,
+            historialFisico: fisico,
             graficoRadar: [
-                { sujeto: 'Técnico', valor: parseFloat(metricas.avg_tecnico) || 0, fullMark: 100 },
-                { sujeto: 'Físico', valor: parseFloat(metricas.avg_fisico) || 0, fullMark: 100 },
-                { sujeto: 'Actitud', valor: parseFloat(metricas.avg_actitud) || 0, fullMark: 100 },
+                { sujeto: 'Técnico Campo', valor: parseFloat(metricas.avg_tecnico) || 0, fullMark: 100 },
+                { sujeto: 'Físico Campo', valor: parseFloat(metricas.avg_fisico) || 0, fullMark: 100 },
+                { sujeto: 'Prueba Escrita', valor: parseFloat(metricas.avg_pruebas_escritas) || 0, fullMark: 100 },
+                { sujeto: 'Actitud', valor: parseFloat(metricas.avg_actitud) || 0, fullMark: 100 }
             ]
         };
     },
 
-    // NUEVO: Informe de promedios de la Liga (Para Asesores/Admin)
-    generarInformeGlobalLiga: async () => {
-        const [metricas, historial] = await Promise.all([
-            reporteModel.obtenerMetricasGlobalesLiga(),
-            reporteModel.obtenerEvolucionGlobalLiga()
+    // Combina métricas resumidas de la liga + gráfico lineal de la liga + la lista de los 28 árbitros
+    generarInformeGlobalLiga: async (anio) => {
+        const [metricasGlobales, historialGlobal, datasetGlobal] = await Promise.all([
+            reporteModel.obtenerMetricasGlobalesLiga(anio),
+            reporteModel.obtenerEvolucionGlobalLiga(anio),
+            reporteModel.obtenerTodosLosArbitrosParaReporteGlobal(anio)
         ]);
 
         return {
-            resumen: { ...metricas, ultima_nota: 'PROMEDIO LIGA' },
-            graficoLineal: historial,
+            tipo: 'global',
+            año: anio,
+            resumen: metricasGlobales,
+            graficoLineal: historialGlobal,
+            dataset: datasetGlobal,
             graficoRadar: [
-                { sujeto: 'Técnico', valor: parseFloat(metricas.avg_tecnico) || 0, fullMark: 100 },
-                { sujeto: 'Físico', valor: parseFloat(metricas.avg_fisico) || 0, fullMark: 100 },
-                { sujeto: 'Actitud', valor: parseFloat(metricas.avg_actitud) || 0, fullMark: 100 },
+                { sujeto: 'Técnico Campo', valor: parseFloat(metricasGlobales.avg_tecnico) || 0, fullMark: 100 },
+                { sujeto: 'Físico Campo', valor: parseFloat(metricasGlobales.avg_fisico) || 0, fullMark: 100 },
+                { sujeto: 'Prueba Escrita', valor: parseFloat(metricasGlobales.avg_pruebas_escritas) || 0, fullMark: 100 },
+                { sujeto: 'Actitud', valor: parseFloat(metricasGlobales.avg_actitud) || 0, fullMark: 100 }
             ]
         };
-    },
-
-    obtenerEstadisticasLiga: async () => {
-        return await reporteModel.obtenerRankingGlobal();
     }
 };
 

@@ -5,47 +5,42 @@ const reporteController = {
     getReportePersonalizado: async (req, res) => {
         try {
             let id_destino = req.params.id_arbitro;
+            const anio = req.query.anio || new Date().getFullYear();
             const esArbitro = req.user.rol === 'arbitro';
 
             if (esArbitro) {
                 id_destino = req.user.id;
-                const data = await reporteService.generarInformeDetallado(id_destino);
-                return res.json(data);
             }
 
-            // Si es Admin/Asesor y no seleccionó a nadie (Mi reporte) -> Ver Global
             if (!id_destino) {
-                const dataGlobal = await reporteService.generarInformeGlobalLiga();
+                const dataGlobal = await reporteService.generarInformeGlobalLiga(anio);
                 return res.json(dataGlobal);
             }
 
-            // Si seleccionó a alguien específico
-            const data = await reporteService.generarInformeDetallado(id_destino);
-            res.json(data);
+            const dataIndividual = await reporteService.generarInformeDetallado(id_destino, anio);
+            return res.json(dataIndividual);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: "No se pudo generar el reporte" });
-        }
-    },
-
-    getRankingGeneral: async (req, res) => {
-        try {
-            const data = await reporteService.obtenerEstadisticasLiga();
-            res.json(data);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+            console.error("Error en getReportePersonalizado:", error);
+            return res.status(500).json({ error: "No se pudo procesar el reporte estructurado anual" });
         }
     },
 
     listarArbitrosConReporte: async (req, res) => {
         try {
-            const result = await pool.query(`
-                SELECT DISTINCT 
+            // Explicación del cambio: Usamos una consulta directa sobre la relación usuario-árbitro.
+            // Quitamos cualquier subconsulta externa de rendimiento aquí para que no limite el listado.
+            // Aseguramos LOWER() en el rol para evitar problemas de mayúsculas/minúsculas.
+            const query = `
+                SELECT 
                     u.id_usuario, 
                     u.nombre, 
                     u.apellido_paterno, 
                     u.apellido_materno, 
-                    a.categoria,
+                    a.categoria
+                FROM usuario u
+                INNER JOIN arbitro a ON u.id_usuario = a.id_arbitro
+                WHERE LOWER(u.rol) = 'arbitro' 
+                ORDER BY 
                     CASE a.categoria
                         WHEN 'FIFA' THEN 1
                         WHEN 'Primera' THEN 2
@@ -53,17 +48,20 @@ const reporteController = {
                         WHEN 'Tercera' THEN 4
                         WHEN 'Cuarta' THEN 5
                         ELSE 6
-                    END AS orden_jerarquico
-                FROM usuario u
-                INNER JOIN arbitro a ON u.id_usuario = a.id_arbitro
-                INNER JOIN evaluacion_partido e ON u.id_usuario = e.id_arbitro
-                WHERE u.rol = 'arbitro'
-                ORDER BY orden_jerarquico ASC, u.apellido_paterno ASC
-            `);
-            res.json(result.rows);
+                    END ASC, 
+                    u.apellido_paterno ASC, 
+                    u.nombre ASC;
+            `;
+            
+            const result = await pool.query(query);
+            
+            // Registro de depuración en la consola del backend para que verifiques cuántos lee Node.js
+            console.log(`[Reportes Back] Árbitros totales encontrados para el selector: ${result.rows.length}`);
+            
+            return res.json(result.rows);
         } catch (error) {
-            console.error("ERROR SQL EN LISTAR:", error.message);
-            res.status(500).json({ error: error.message });
+            console.error("Error crítico en listarArbitrosConReporte:", error);
+            return res.status(500).json({ error: "Fallo al obtener la nómina completa de árbitros" });
         }
     }
 };
