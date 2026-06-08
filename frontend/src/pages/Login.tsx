@@ -100,7 +100,7 @@ const LoginPage = () => {
           <p className="text-gray-500 text-sm font-medium">Gestión Profesional de Arbitraje</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-2">
           {error && (
             <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl text-red-700 text-sm animate-bounce">
               {error}

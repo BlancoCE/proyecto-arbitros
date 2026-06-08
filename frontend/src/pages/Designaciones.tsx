@@ -326,7 +326,7 @@ const TarjetaPartido = ({ partido, onClick, esEdicion, icon }: any) => {
             </div>
 
             <div className="flex justify-between items-start mb-1">
-                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <div className="text-[10px] font-black text-slate-700 uppercase tracking-widest">
                     {partido.torneo}
                 </div>
                 {miRol && (
@@ -342,7 +342,7 @@ const TarjetaPartido = ({ partido, onClick, esEdicion, icon }: any) => {
                 <div className="flex-1 font-black text-slate-800 uppercase text-sm leading-tight">
                     {partido.equipo_local}
                 </div>
-                <div className="text-[10px] font-black text-slate-300 italic px-2">VS</div>
+                <div className="text-[10px] font-black text-slate-600 italic px-2">VS</div>
                 <div className="flex-1 font-black text-slate-800 uppercase text-sm leading-tight text-right">
                     {partido.equipo_visitante}
                 </div>
@@ -362,11 +362,11 @@ const TarjetaPartido = ({ partido, onClick, esEdicion, icon }: any) => {
 
             <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
                 <div className="flex flex-col">
-                    <span className="text-[9px] font-black text-slate-400 uppercase">Fecha</span>
+                    <span className="text-[10px] font-black text-slate-800 uppercase">Fecha</span>
                     <span className="text-xs font-bold text-slate-700">{partido.fecha.split('T')[0]}</span>
                 </div>
                 <div className="flex flex-col text-right">
-                    <span className="text-[9px] font-black text-slate-400 uppercase">Hora</span>
+                    <span className="text-[10px] font-black text-slate-800 uppercase">Hora</span>
                     <span className={`text-xs font-bold ${conConflicto ? 'text-amber-600' : 'text-slate-700'}`}>
                         {partido.hora.substring(0, 5)}
                     </span>

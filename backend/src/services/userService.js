@@ -56,7 +56,7 @@ const userService = {
       const newUserId = await userModel.insertUser(client, { 
           ...userData, 
           password: hashedPass, // <--- Enviamos el hash, no el texto plano
-          rol: 'asesor', 
+          rol: userData.rol || 'Asesor Técnico', 
           activo: true 
       });
       await client.query('INSERT INTO asesor (id_asesor, estado) VALUES ($1, $2)', 

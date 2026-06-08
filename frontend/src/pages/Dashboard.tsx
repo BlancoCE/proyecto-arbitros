@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Calendar, CheckCircle, AlertCircle, X, ShieldAlert, MapPin, Clock } from 'lucide-react';
+import { Users, Calendar, CheckCircle, AlertCircle, X, ShieldAlert, MapPin, Clock, BarChart3, PieChart } from 'lucide-react';
 
 interface AlertaItem {
   id_usuario: number;
@@ -28,6 +28,7 @@ interface Partido {
 const Dashboard = () => {
   const [counts, setCounts] = useState({ arbitros: 0, asesores: 0, alertas: 0, partidos: 0 });
   const [distribucion, setDistribucion] = useState<DistribucionItem[]>([]);
+  const [todosLosPartidos, setTodosLosPartidos] = useState<Partido[]>([]);
   const [proximosPartidos, setProximosPartidos] = useState<Partido[]>([]);
   const [listaAlertas, setListaAlertas] = useState<AlertaItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,11 +38,11 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Llamada a las estadísticas del dashboard
+        // 1. Obtener estadísticas generales
         const resStats = await fetch(`${import.meta.env.VITE_API_URL}/api/dashboard/stats`);
         const dataStats = await resStats.json();
 
-        // Llamada a los partidos (reutilizando tu API de partidos existente)
+        // 2. Obtener lista completa de partidos
         const resPartidos = await fetch(`${import.meta.env.VITE_API_URL}/api/partidos`);
         const dataPartidos = await resPartidos.json();
 
@@ -56,12 +57,15 @@ const Dashboard = () => {
           setListaAlertas(dataStats.alertas || []);
         }
 
-        if (dataPartidos) {
-          // Filtramos solo los programados y tomamos los 3 más cercanos
+        if (dataPartidos && Array.isArray(dataPartidos)) {
+          setTodosLosPartidos(dataPartidos);
+          
+          // Filtrar los top 3 partidos próximos en estado 'Programado'
           const futuros = dataPartidos
             .filter((p: Partido) => p.estado === 'Programado')
             .slice(0, 3);
           setProximosPartidos(futuros);
+          
           setCounts(prev => ({ ...prev, partidos: dataPartidos.length }));
         }
 
@@ -74,6 +78,74 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  // ==========================================
+  // LÓGICA 1: PROCESAMIENTO DE ÁRBITROS (CATEGORÍAS Y GÉNERO)
+  // ==========================================
+  
+  // Agrupar cantidades totales exclusivamente por categoría (sumando varones y damas)
+  const categoriasAgrupadas = distribucion.reduce((acc: { [key: string]: number }, item) => {
+    const cantidadNum = parseInt(item.cantidad, 10) || 0;
+    acc[item.categoria] = (acc[item.categoria] || 0) + cantidadNum;
+    return acc;
+  }, {});
+
+  // Orden de jerarquía oficial del Colegio de Árbitros
+  const ordenCategorias = ['FIFA', 'Primera', 'Segunda', 'Tercera', 'Cuarta'];
+  const infoCategoriasGrafica = ordenCategorias
+    .map(cat => ({
+      categoria: cat,
+      total: categoriasAgrupadas[cat] || 0
+    }))
+    .filter(item => item.total > 0 || distribucion.some(d => d.categoria === item.categoria));
+
+  const maxCategoriaValue = Math.max(...infoCategoriasGrafica.map(c => c.total), 1);
+
+  // Agrupar cantidades por género/especialización
+  const generosAgrupados = distribucion.reduce((acc: { masculino: number; femenino: number }, item) => {
+    const cantidadNum = parseInt(item.cantidad, 10) || 0;
+    if (item.genero === 'Masculino') acc.masculino += cantidadNum;
+    if (item.genero === 'Femenino') acc.femenino += cantidadNum;
+    return acc;
+  }, { masculino: 0, femenino: 0 });
+
+  const totalArbitrosGenero = generosAgrupados.masculino + generosAgrupados.femenino || 1;
+
+
+  // ==========================================
+  // LÓGICA 2: GRÁFICA DE DISTRIBUCIÓN DE PARTIDOS DEL MES
+  // ==========================================
+  
+  const fechaActual = new Date();
+  const mesActualNum = fechaActual.getMonth(); 
+  const anioActualNum = fechaActual.getFullYear();
+
+  const partidosSemanales = { semana1: 0, semana2: 0, semana3: 0, semana4: 0 };
+
+  // Recorrer el pool de la base de datos para agrupar cronológicamente por semanas del mes activo
+  todosLosPartidos.forEach(partido => {
+    const fechaPart = new Date(partido.fecha);
+    if (fechaPart.getMonth() === mesActualNum && fechaPart.getFullYear() === anioActualNum) {
+      const diaMes = fechaPart.getDate();
+      if (diaMes <= 7) partidosSemanales.semana1++;
+      else if (diaMes <= 14) partidosSemanales.semana2++;
+      else if (diaMes <= 21) partidosSemanales.semana3++;
+      else partidosSemanales.semana4++;
+    }
+  });
+
+  const infoSemanasGrafica = [
+    { etiqueta: 'Semana 1 (Días 1-7)', cantidad: partidosSemanales.semana1 },
+    { etiqueta: 'Semana 2 (Días 8-14)', cantidad: partidosSemanales.semana2 },
+    { etiqueta: 'Semana 3 (Días 15-21)', cantidad: partidosSemanales.semana3 },
+    { etiqueta: 'Semana 4 (Días 22+)', cantidad: partidosSemanales.semana4 }
+  ];
+
+  const maxPartidosSemana = Math.max(...infoSemanasGrafica.map(s => s.cantidad), 1);
+
+
+  // ==========================================
+  // CONFIGURACIÓN DE TARJETAS SUPERIORES
+  // ==========================================
   const stats = [
     { label: 'Árbitros Activos', value: counts.arbitros.toString(), icon: Users, color: 'bg-green-500', action: null },
     { label: 'Asesores Activos', value: counts.asesores.toString(), icon: CheckCircle, color: 'bg-blue-500', action: null },
@@ -90,22 +162,18 @@ const Dashboard = () => {
   return (
     <div className="p-4 md:p-8 space-y-8 relative">
       
-      {/* Banner de Bienvenida */}
+      {/* Banner Institucional de Bienvenida */}
       <div className="bg-gradient-to-r from-blue-700 to-indigo-800 p-8 rounded-3xl border border-white/20 shadow-xl">
         <h1 className="text-3xl font-bold text-white tracking-tight">Sistema AFLP</h1>
         <p className="text-blue-100 mt-2">Panel de Control de Arbitraje • {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
       </div>
 
+      {/* Tarjetas Analíticas Superiores */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
           <div 
-            // 1. Solución Key: Usamos la etiqueta que es única en lugar del índice 'i'
             key={stat.label} 
-            
-            // 2. Solución Ternaria: Simplificamos usando el operador Nullish Coalescing (??)
             onClick={stat.action ?? undefined}
-            
-            // 3. Solución Accesibilidad: Añadimos soporte para navegación y pulsación por teclado
             onKeyDown={(e) => {
               if (stat.action && (e.key === 'Enter' || e.key === ' ')) {
                 e.preventDefault();
@@ -115,7 +183,6 @@ const Dashboard = () => {
             role={stat.action ? "button" : undefined}
             tabIndex={stat.action ? 0 : undefined}
             aria-label={stat.action ? `Ver detalles de ${stat.label}` : undefined}
-
             className={`bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-between border border-gray-100 ${stat.action ? 'cursor-pointer border-red-100' : ''}`}
           >
             <div>
@@ -129,102 +196,166 @@ const Dashboard = () => {
         ))}
       </div>
 
+      {/* Bloque Central del Dashboard de Dos Columnas */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
-        {/* COLUMNA IZQUIERDA: PRÓXIMOS PARTIDOS */}
-        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
-          <div className="flex justify-between items-center mb-6">
+        {/* COLUMNA IZQUIERDA: GRÁFICA DE AGENDA MENSUAL Y PRÓXIMOS ENCUENTROS */}
+        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
+          <div className="flex justify-between items-center border-b border-gray-100 pb-3">
             <h3 className="text-gray-800 text-lg font-black uppercase tracking-tight flex items-center gap-3">
-              <Calendar className="text-purple-600" size={22} /> Próximos Partidos
+              <Calendar className="text-purple-600" size={22} /> Agenda Mensual
             </h3>
-            <span className="text-[10px] font-bold bg-purple-50 text-purple-600 px-3 py-1 rounded-full">TOP 3</span>
+            <span className="text-[10px] font-bold bg-purple-50 text-purple-600 px-3 py-1 rounded-full uppercase">
+              {fechaActual.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+            </span>
           </div>
 
+          {/* Gráfica de distribución de barras horizontales */}
           <div className="space-y-4">
-            {proximosPartidos.length > 0 ? (
-              proximosPartidos.map((partido) => (
-                <div key={partido.id_partido} className="p-4 rounded-2xl bg-gray-50 border border-gray-100 hover:border-purple-200 transition-colors">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="font-black text-gray-800 text-sm uppercase truncate flex-1">
-                      {partido.equipo_local} <span className="text-gray-400 mx-2 text-xs">VS</span> {partido.equipo_visitante}
-                    </p>
-                    <span className="text-[10px] font-black text-purple-600 ml-2">{partido.fecha.split('T')[0]}</span>
-                  </div>
-                  <div className="flex items-center gap-4 text-gray-500">
-                    <div className="flex items-center gap-1 text-[10px] font-bold">
-                      <MapPin size={12} /> {partido.ubicacion}
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+              <span>•</span> Distribución de Partidos por Semana
+            </p>
+            
+            <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+              {infoSemanasGrafica.map((semana, index) => {
+                const anchoPorcentaje = (semana.cantidad / maxPartidosSemana) * 100;
+                return (
+                  <div key={index} className="space-y-1">
+                    <div className="flex justify-between items-center text-[11px]">
+                      <span className="font-black text-gray-600 uppercase">{semana.etiqueta}</span>
+                      <span className="font-black text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">
+                        {semana.cantidad} {semana.cantidad === 1 ? 'Partido' : 'Partidos'}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1 text-[10px] font-bold">
-                      <Clock size={12} /> {partido.hora.slice(0, 5)}
+                    <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full transition-all duration-500"
+                        style={{ width: `${anchoPorcentaje}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Listado resumido de partidos inmediatos */}
+          <div className="space-y-3">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              • Próximos Encuentros en Agenda (Vista Rápida)
+            </p>
+            <div className="space-y-3">
+              {proximosPartidos.length > 0 ? (
+                proximosPartidos.slice(0, 2).map((partido) => (
+                  <div key={partido.id_partido} className="p-3 rounded-xl bg-white border border-gray-100 hover:border-purple-200 shadow-sm transition-all flex justify-between items-center">
+                    <div className="truncate pr-2">
+                      <p className="font-black text-gray-800 text-xs uppercase truncate">
+                        {partido.equipo_local} <span className="text-purple-500 font-normal">vs</span> {partido.equipo_visitante}
+                      </p>
+                      <div className="flex items-center gap-3 text-gray-400 text-[10px] font-bold mt-1">
+                        <span className="flex items-center gap-0.5"><MapPin size={10} /> {partido.ubicacion}</span>
+                        <span className="flex items-center gap-0.5"><Clock size={10} /> {partido.hora.slice(0, 5)}</span>
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-black bg-purple-100 text-purple-700 px-2 py-1 rounded-lg shrink-0 whitespace-nowrap">
+                      {partido.fecha.split('T')[0]}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4 text-gray-400 italic text-xs">
+                  No hay partidos programados en este mes
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* COLUMNA DERECHA: SECCIÓN GRÁFICA DE DISTRIBUCIÓN ARBITRAL */}
+        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
+          <h3 className="text-gray-800 text-lg font-black uppercase tracking-tight flex items-center gap-3 border-b border-gray-100 pb-3">
+            <BarChart3 className="text-green-600" size={22} /> Estadísticas del Personal
+          </h3>
+
+          {distribucion.length > 0 ? (
+            <div className="space-y-6">
+              
+              {/* Gráfica de Barras por Categoría */}
+              <div className="space-y-4">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                  <span>•</span> Cantidad por Categoría de Árbitro
+                </p>
+                <div className="space-y-3">
+                  {infoCategoriasGrafica.map((item) => {
+                    const porcentajeAncho = (item.total / maxCategoriaValue) * 100;
+                    return (
+                      <div key={item.categoria} className="space-y-1">
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="font-black text-gray-700 uppercase">{item.categoria}</span>
+                          <span className="font-bold text-gray-900 bg-slate-100 px-2 py-0.5 rounded-md">
+                            {item.total} {item.total === 1 ? 'Miembro' : 'Miembros'}
+                          </span>
+                        </div>
+                        <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full transition-all duration-500"
+                            style={{ width: `${porcentajeAncho}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Distribución por Género */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-3">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                  <PieChart size={14} className="text-blue-500" /> Especialización por Género
+                </p>
+                
+                <div className="grid grid-cols-2 gap-4 pt-1">
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-black text-gray-600 uppercase">
+                      <span>Varones</span>
+                      <span>{Math.round((generosAgrupados.masculino / totalArbitrosGenero) * 100)}%</span>
+                    </div>
+                    <p className="text-xl font-black text-blue-600">{generosAgrupados.masculino}</p>
+                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-blue-500" 
+                        style={{ width: `${(generosAgrupados.masculino / totalArbitrosGenero) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-black text-gray-600 uppercase">
+                      <span>Damas</span>
+                      <span>{Math.round((generosAgrupados.femenino / totalArbitrosGenero) * 100)}%</span>
+                    </div>
+                    <p className="text-xl font-black text-pink-500">{generosAgrupados.femenino}</p>
+                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-pink-500" 
+                        style={{ width: `${(generosAgrupados.femenino / totalArbitrosGenero) * 100}%` }}
+                      />
                     </div>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="flex flex-col items-center justify-center py-10 text-gray-400">
-                <p className="italic text-sm">No hay partidos programados próximamente</p>
               </div>
-            )}
-          </div>
+
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-10 text-gray-400">
+              <p className="italic text-sm">No se encontraron datos de categorías</p>
+            </div>
+          )}
         </div>
 
-        {/* COLUMNA DERECHA: DISTRIBUCIÓN POR CATEGORÍA */}
-        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
-          <h3 className="text-gray-800 text-lg font-black uppercase tracking-tight flex items-center gap-3 mb-6">
-            <Users className="text-green-600" size={22} /> Distribución Arbitral
-          </h3>
-
-          <div className="grid grid-cols-1 gap-3">
-            {distribucion.length > 0 ? (
-              [...distribucion]
-                .sort((a, b) => {
-                  const orden: { [key: string]: number } = {
-                    'FIFA': 1,
-                    'Primera': 2,
-                    'Segunda': 3,
-                    'Tercera': 4,
-                    'Cuarta': 5
-                  };
-                  // Si la categoría no está en la lista, la mandamos al final (99)
-                  const pesoA = orden[a.categoria] || 99;
-                  const pesoB = orden[b.categoria] || 99;
-                  return pesoA - pesoB;
-                })
-                .map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-md transition-all group">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs transition-colors ${
-                        item.genero === 'Masculino' 
-                          ? 'bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white' 
-                          : 'bg-pink-100 text-pink-600 group-hover:bg-pink-600 group-hover:text-white'
-                      }`}>
-                        {item.genero === 'Masculino' ? 'M' : 'F'}
-                      </div>
-                      <div>
-                        <p className="text-xs font-black text-gray-800 uppercase tracking-tight">
-                          {item.categoria}
-                        </p>
-                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">
-                          Categoría {item.genero}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-xl font-black text-gray-800">{item.cantidad}</span>
-                      <span className="text-[9px] font-black text-gray-400 ml-1 uppercase">Miembros</span>
-                    </div>
-                  </div>
-                ))
-            ) : (
-              <div className="flex flex-col items-center justify-center py-10 text-gray-400">
-                <p className="italic text-sm">No se encontraron datos de categorías</p>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
-      {/* MODAL DE ALERTAS (Se mantiene igual a tu código anterior) */}
+      {/* MODAL DE ALERTAS (ARTÍCULO 7) */}
       {showModalAlertas && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white w-full max-w-lg rounded-[30px] shadow-2xl overflow-hidden animate-in zoom-in duration-200">

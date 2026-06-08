@@ -147,8 +147,8 @@ const ArbitrosPage = () => {
           >
             {/* Badge de Categoría Jerárquica */}
             <div className="absolute top-0 right-0">
-              <div className={`px-4 py-1.5 rounded-bl-2xl text-[8px] font-black uppercase tracking-tighter shadow-sm ${
-                arbitro.categoria === 'FIFA' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
+              <div className={`px-4 py-1.5 rounded-bl-2xl text-[10px] font-black uppercase tracking-tighter shadow-sm ${
+                arbitro.categoria === 'FIFA' ? 'bg-indigo-900 text-white' : 'bg-slate-100 text-slate-500'
               }`}>
                 {arbitro.categoria}
               </div>
@@ -173,7 +173,7 @@ const ArbitrosPage = () => {
                 </h3><h3 className="font-black text-slate-800 text-xs uppercase leading-tight truncate">
                   {arbitro.apellido_paterno} {arbitro.apellido_materno}
                 </h3>
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
+                <span className="text-[9px] font-bold text-slate-700 uppercase tracking-tighter">
                   {arbitro.especializacion} • {arbitro.genero}
                 </span>
                 <div className={`mt-2 px-2 py-0.5 rounded-lg border text-[8px] font-black uppercase inline-block ${getEstadoEstilo(arbitro.estado)}`}>
@@ -185,19 +185,19 @@ const ArbitrosPage = () => {
             {/* Información de Contacto Compacta */}
             <div className="grid grid-cols-2 gap-2 mb-4 border-t border-slate-50 pt-3">
               <div className="flex items-center gap-2 text-slate-500">
-                <Phone size={12} className="text-slate-300" />
-                <span className="text-[10px] font-bold">{arbitro.telefono}</span>
+                <Phone size={12} className="text-slate-600" />
+                <span className="text-[12px] font-bold">{arbitro.telefono}</span>
               </div>
               <div className="flex items-center gap-2 text-slate-500">
-                <Calendar size={12} className="text-slate-300" />
-                <span className="text-[10px] font-bold">{arbitro.ci}</span>
+                <Calendar size={12} className="text-slate-600" />
+                <span className="text-[12px] font-bold">{arbitro.ci}</span>
               </div>
             </div>
 
             {/* Botón Editar Compacto */}
             <button 
               onClick={() => { setArbitroParaEditar(arbitro); setIsEditModalOpen(true); }}
-              className="w-full py-2.5 bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white rounded-xl transition-all flex items-center justify-center gap-2 group-hover:shadow-lg"
+              className="w-full py-2.5 bg-slate-50 text-slate-700 hover:bg-slate-900 hover:text-white rounded-xl transition-all flex items-center justify-center gap-2 group-hover:shadow-lg"
             >
               <Edit size={14} />
               <span className="text-[9px] font-black uppercase tracking-widest">Gestionar Perfil</span>

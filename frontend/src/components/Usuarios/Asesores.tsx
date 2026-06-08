@@ -133,7 +133,7 @@ const AsesoresPage = () => {
                   <span className="text-indigo-600">{asesor.apellido_paterno} {asesor.apellido_materno}</span>
                 </h3>
                 
-                <div className="mt-2 px-3 py-1 bg-slate-50 rounded-lg text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <div className="mt-2 px-3 py-1 bg-slate-50 rounded-lg text-[10px] font-black text-slate-800 uppercase tracking-widest">
                   {asesor.rol}
                 </div>
               </div>
@@ -155,7 +155,7 @@ const AsesoresPage = () => {
 
               <button 
                 onClick={() => handleEditClick(asesor)}
-                className="w-full mt-6 py-4 bg-white border-2 border-slate-100 rounded-2xl text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all flex items-center justify-center gap-2"
+                className="w-full mt-6 py-4 bg-white border-2 border-slate-100 rounded-2xl text-slate-800 font-black uppercase text-[10px] tracking-widest hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all flex items-center justify-center gap-2"
               >
                 <Edit size={14} /> Editar Perfil
               </button>
