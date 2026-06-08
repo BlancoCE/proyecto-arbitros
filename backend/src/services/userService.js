@@ -6,10 +6,7 @@ const crypto = require('node:crypto');
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  // Aquí le decimos que use la variable de Render, y si no existe, use 587 por defecto
-  port: process.env.SMTP_PORT || 587, 
-  
-  // Ojo aquí: Convertimos el texto 'false' a un booleano real
+  port: parseInt(process.env.SMTP_PORT) || 587, 
   secure: process.env.SMTP_SECURE === 'true' ? true : false,
   auth: {
     user: process.env.EMAIL_USER,
