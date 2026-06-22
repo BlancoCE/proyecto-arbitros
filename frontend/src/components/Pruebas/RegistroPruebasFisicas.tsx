@@ -108,7 +108,7 @@ const RegistroPruebasFisicas: React.FC = () => {
       }));
 
       formData.append('datos', JSON.stringify(datosFinales));
-      await axios.post('${import.meta.env.VITE_API_URL}/api/pruebas-fisicas/registrar', formData);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/pruebas-fisicas/registrar`, formData);
       alert("Éxito: Solo se registraron los árbitros con datos modificados.");
       setView('historial');
     } catch (err) { alert("Error al guardar."); }

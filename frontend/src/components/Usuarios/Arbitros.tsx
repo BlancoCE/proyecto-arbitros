@@ -84,7 +84,7 @@ const ArbitrosPage = () => {
     switch (estado) {
       case 'Activo': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
       case 'Suspendido': return 'bg-amber-50 text-amber-600 border-amber-100';
-      case 'Inhabilitado': return 'bg-rose-50 text-rose-600 border-rose-100';
+      case 'Inactivo': return 'bg-rose-50 text-rose-600 border-rose-100';
       case 'En Licencia': return 'bg-blue-50 text-blue-600 border-blue-100';
       default: return 'bg-slate-50 text-slate-600 border-slate-100';
     }
@@ -132,7 +132,7 @@ const ArbitrosPage = () => {
             <option value="Todos">TODOS LOS ESTADOS</option>
             <option value="Activo">ACTIVO</option>
             <option value="Suspendido">SUSPENDIDO</option>
-            <option value="Inhabilitado">INHABILITADO</option>
+            <option value="Inactivo">INACTIVO</option>
             <option value="En Licencia">EN LICENCIA</option>
           </select>
         </div>
